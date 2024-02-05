@@ -1,6 +1,5 @@
 # MoviesAPI
-MoviesAPI
-
+ 
 # Requirements
 
 ## 1. Fetch test data via https from OMDB API
