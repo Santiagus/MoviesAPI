@@ -1,0 +1,12 @@
+{
+    "url": "http://www.omdbapi.com/",
+    "parameters": {
+        "apikey": "889761e4",
+        "page": 1,
+        "s": "disney",
+        "type": "movie"
+    },
+    "headers": {
+        "Accepts": "application/json"
+    }
+}
