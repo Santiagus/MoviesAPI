@@ -6,7 +6,7 @@ class MoviesRepository:
         self.session = session
 
     def add(self, movie):
-        self.session = movie
+        self.session.add(movie)
 
     def get_by_id(self, imdb_id):
         return (
@@ -15,8 +15,8 @@ class MoviesRepository:
             .one_or_none()
         )
 
-    def get_all(self, limit=None, **filters):
-        return self.session.query.filter_by(**filters).limit(limit).all()
+    def get_all(self, limit=None):
+        return self.session.query.limit(limit).all()
 
     def delete_by_id(self, imdb_id):
         try:
