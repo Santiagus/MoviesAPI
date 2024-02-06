@@ -5,6 +5,15 @@ class MoviesRepository:
     def __init__(self, session):
         self.session = session
 
+    def is_database_empty(self):
+        """
+        Check if the MovieModel table is empty.
+        Returns:
+            bool: True if the table is empty, False otherwise.
+        """
+        num_records = self.session.query(MovieModel).count()
+        return num_records == 0
+
     def add(self, movie):
         self.session.add(movie)
 
