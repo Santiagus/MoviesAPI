@@ -120,3 +120,33 @@ def test_get_all_movies(mock_session):
 
     # Assert that the session's query method is called with the correct limit
     query_mock.limit.assert_called_once_with(5)
+
+
+def test_is_database_empty_returns_true_when_empty(mock_session):
+    # Mocking the count method of the query to return zero records
+    mock_query = mock_session.query.return_value
+    mock_query.count.return_value = 0
+
+    # Create a repository instance with the mocked session
+    movies_repo = MoviesRepository(mock_session)
+
+    # Call the is_database_empty method
+    is_empty = movies_repo.is_database_empty()
+
+    # Assert that the method returns True
+    assert is_empty is True
+
+
+def test_is_database_empty_returns_false_when_not_empty(mock_session):
+    # Mocking the count method of the query to return non-zero records
+    mock_query = mock_session.query.return_value
+    mock_query.count.return_value = 5
+
+    # Create a repository instance with the mocked session
+    movies_repo = MoviesRepository(mock_session)
+
+    # Call the is_database_empty method
+    is_empty = movies_repo.is_database_empty()
+
+    # Assert that the method returns False
+    assert is_empty is False
