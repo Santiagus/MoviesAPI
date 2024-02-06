@@ -43,16 +43,36 @@ def fetch_movies_data(url, parameters, headers, limit=100):
             start = page * PAGE_SIZE
             end = (page + 1) * PAGE_SIZE
             movies_data_list[start:end] = json_data[:PAGE_SIZE]
+            if limit < end:  # Stops if limit passed
+                break
 
     logging.info(f"Read {len(movies_data_list)} movies.")
     logging.info("Data fetch finished")
     return movies_data_list[:limit]
 
 
+def fetch_movie_data_by_imdb_id(url, parameters, headers, imdb_id):
+    logging.info("Data fetch started")
+    parameters["i"] = imdb_id
+    session = Session()
+    response = session.get(url, headers=headers, params=parameters)
+
+    logging.debug(f"Status code : {response.status_code}")
+    logging.debug(f"Response : {response.text}")
+
+    response.raise_for_status()  # Raise HTTPError if status code is not successful (>= 400)
+
+    if response.status_code == 200:
+        json_data = json.loads(response.text)
+        logging.debug(f"Data: {json_data}")
+        logging.info("Data fetch finished")
+        return json_data
+
+
 if __name__ == "__main__":
 
     try:
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.DEBUG)
 
         # Load config from JSON file
         with open("data_fetcher/fetcher_config.json", "r") as file:
@@ -60,8 +80,21 @@ if __name__ == "__main__":
 
         # Fetch movies data with the specified config
         movies_data = fetch_movies_data(
-            config.get("url"), config.get("parameters"), config.get("headers")
+            config.get("url"),
+            config.get("parameters_global_search"),
+            config.get("headers"),
+            limit=1,
         )
+        # Complete movie data
+        for movie in movies_data:
+            if movie:
+                movie = fetch_movie_data_by_imdb_id(
+                    config.get("url"),
+                    config.get("parameters_featch_by_id"),
+                    config.get("headers"),
+                    movie.get("imdbID"),
+                )
+                logging.debug(f"Updated movie data: {movie}")
         logging.info("Program finished")
 
     except HTTPError as e:
