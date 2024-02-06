@@ -44,6 +44,28 @@ def test_get_movie_by_id(mock_session):
     assert movie.director == "Christopher Nolan"
 
 
+def test_get_movie_by_title(mock_session):
+    # Mocking the query method of the session
+    mock_session.query().filter().one_or_none.return_value = MovieModel(
+        imdb_id="tt1375666",
+        title="Inception",
+        year="2010",
+        director="Christopher Nolan",
+    )
+
+    # Create a repository instance with the mocked session
+    movies_repo = MoviesRepository(mock_session)
+
+    # Call the get_by_id method
+    movie = movies_repo.get_by_title("Inception")
+
+    # Assert that the returned movie has the correct attributes
+    assert movie.imdb_id == "tt1375666"
+    assert movie.title == "Inception"
+    assert movie.year == "2010"
+    assert movie.director == "Christopher Nolan"
+
+
 def test_delete_movie_by_id(mock_session):
     # Mocking the query method of the session
     mock_session.query().filter_by().first.return_value = MovieModel(
