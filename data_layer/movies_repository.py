@@ -1,4 +1,4 @@
-from repository.models import MovieModel
+from data_layer.models import MovieModel
 
 
 class MoviesRepository:
@@ -8,7 +8,7 @@ class MoviesRepository:
     def add(self, movie):
         self.session = movie
 
-    def get_by_id(self, imdb_id): 
+    def get_by_id(self, imdb_id):
         return (
             self.session.query(MovieModel)
             .filter(MovieModel.imdb_id == imdb_id)
