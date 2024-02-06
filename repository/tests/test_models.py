@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from repository.models import (
-    Movie,
+    MovieModel,
 )
 
 
@@ -15,13 +15,13 @@ def db_session():
     session = Session()
 
     # Create the database schema
-    Movie.metadata.create_all(engine)
+    MovieModel.metadata.create_all(engine)
 
     yield session
 
     # Clean up after the test session
     session.close()
-    Movie.metadata.drop_all(engine)
+    MovieModel.metadata.drop_all(engine)
 
 
 def test_movie_model(db_session):
@@ -57,14 +57,16 @@ def test_movie_model(db_session):
     # Transform keys to snake case
     transformed_data = {key.lower(): value for key, value in movie_data.items()}
 
-    movie = Movie(**transformed_data)
+    movie = MovieModel(**transformed_data)
 
     # Add the movie to the session
     db_session.add(movie)
     db_session.commit()
 
     # Retrieve the movie from the session
-    retrieved_movie = db_session.query(Movie).filter_by(imdb_id="tt0362300").first()
+    retrieved_movie = (
+        db_session.query(MovieModel).filter_by(imdb_id="tt0362300").first()
+    )
 
     # Assert that the retrieved movie matches the original movie
     assert retrieved_movie.imdb_id == movie_data["imdb_id"]

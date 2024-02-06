@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base
 Base = declarative_base()
 
 
-class Movie(Base):
+class MovieModel(Base):
     __tablename__ = "movies"
 
     imdb_id = Column(String, primary_key=True)
