@@ -1,6 +1,6 @@
 # .gitmessage
 
-<type>[optional scope]: <description>
+# <type>[optional scope]: <description>
 
 # ! After <type> for breaking change.
 
