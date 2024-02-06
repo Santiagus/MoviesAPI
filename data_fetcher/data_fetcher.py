@@ -66,3 +66,7 @@ if __name__ == "__main__":
 
     except HTTPError as e:
         logging.error(f"HTTPError: {e}")
+    except ConnectionError as e:
+        logging.error(f"ConnectionError: {e}")
+    except Exception as e:
+        logging.error(f"Error: {e}")
