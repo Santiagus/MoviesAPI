@@ -110,41 +110,45 @@ if __name__ == "__main__":
         # Create all tables defined in the models
         Base.metadata.create_all(engine)
 
-        # Fetch movies data with the specified config
-        movies_data = fetch_movies_data(
-            config.get("url"),
-            config.get("parameters_global_search"),
-            config.get("headers"),
-            config.get("movies_limit"),
-        )
-
-        # Complete movie data and filter out None values
-        logging.debug(f"Updating movies data...")
-        movies_data = [
-            fetch_movie_data_by_imdb_id(
-                config.get("url"),
-                config.get("parameters_featch_by_id"),
-                config.get("headers"),
-                movie.get("imdbID"),
-            )
-            for movie in movies_data
-            if movie
-        ]
-
-        # Save into database
         with UnitOfWork() as unit_of_work:
             repo = MoviesRepository(unit_of_work.session)
+
             if repo.is_database_empty():
-                logging.info("Empty Data Base. Collecting 100 movies sample.")
+                # Fetch movies data with the specified config
+                movies_data = fetch_movies_data(
+                    config.get("url"),
+                    config.get("parameters_global_search"),
+                    config.get("headers"),
+                    config.get("movies_limit"),
+                )
+
+                # Complete movie data and filter out None values
+                logging.debug(f"Updating movies data...")
+                movies_data = [
+                    fetch_movie_data_by_imdb_id(
+                        config.get("url"),
+                        config.get("parameters_featch_by_id"),
+                        config.get("headers"),
+                        movie.get("imdbID"),
+                    )
+                    for movie in movies_data
+                    if movie
+                ]
+
+                # Save into database
                 for movie in movies_data:
                     if movie is not None:
                         snake_case_movie = {
                             camel_to_snake(key): value for key, value in movie.items()
                         }
-                        repo.add(MovieModel(**snake_case_movie))
+                        existing_movie = repo.get_by_id(snake_case_movie["imdb_id"])
+                        if not existing_movie:
+                            if "response" in snake_case_movie:
+                                del snake_case_movie["response"]
+                            repo.add(MovieModel(**snake_case_movie))
                 repo.session.commit()
-        logging.debug(f"Saved: \n {repo.get_all()}")
-        logging.info("Program finished")
+            logging.debug(f"Movies in DataBase: \n {repo.get_all()}")
+            logging.info("Program finished")
 
     except HTTPError as e:
         logging.error(f"HTTPError: {e}")
