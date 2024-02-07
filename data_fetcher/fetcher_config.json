@@ -1,5 +1,6 @@
 {
     "url": "http://www.omdbapi.com/",
+    "movies_limit": 100,
     "parameters_global_search": {
         "apikey": "889761e4",
         "page": 1,
