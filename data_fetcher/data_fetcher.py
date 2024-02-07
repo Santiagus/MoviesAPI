@@ -2,6 +2,21 @@ import json
 import logging
 from requests import Session
 from requests.exceptions import HTTPError
+from sqlalchemy import create_engine
+from alembic.config import Config
+from data_layer.unit_of_work import UnitOfWork
+from data_layer.movies_repository import MoviesRepository
+from data_layer.models import MovieModel, Base
+
+
+def get_database_url_from_alembic_config():
+    alembic_cfg = Config("alembic.ini")
+    database_url = alembic_cfg.get_section_option("alembic", "sqlalchemy.url")
+    if database_url is None:
+        raise ValueError(
+            "Database URL is missing or could not be retrieved from Alembic configuration"
+        )
+    return database_url
 
 
 def fetch_movies_data(url, parameters, headers, limit=100):
@@ -69,6 +84,16 @@ def fetch_movie_data_by_imdb_id(url, parameters, headers, imdb_id):
         return json_data
 
 
+def camel_to_snake(name):
+    """
+    Convert camelCase string to snake_case.
+    """
+    import re
+
+    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
+    return re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
+
+
 if __name__ == "__main__":
 
     try:
@@ -78,6 +103,13 @@ if __name__ == "__main__":
         with open("data_fetcher/fetcher_config.json", "r") as file:
             config = json.load(file)
 
+        # Database Setup
+        database_url = get_database_url_from_alembic_config()
+        engine = create_engine(database_url)
+
+        # Create all tables defined in the models
+        Base.metadata.create_all(engine)
+
         # Fetch movies data with the specified config
         movies_data = fetch_movies_data(
             config.get("url"),
@@ -85,21 +117,40 @@ if __name__ == "__main__":
             config.get("headers"),
             limit=1,
         )
-        # Complete movie data
-        for movie in movies_data:
-            if movie:
-                movie = fetch_movie_data_by_imdb_id(
-                    config.get("url"),
-                    config.get("parameters_featch_by_id"),
-                    config.get("headers"),
-                    movie.get("imdbID"),
-                )
-                logging.debug(f"Updated movie data: {movie}")
+
+        # Complete movie data and filter out None values
+        logging.debug(f"Updating movies data...")
+        movies_data = [
+            fetch_movie_data_by_imdb_id(
+                config.get("url"),
+                config.get("parameters_featch_by_id"),
+                config.get("headers"),
+                movie.get("imdbID"),
+            )
+            for movie in movies_data
+            if movie
+        ]
+
+        # Save into database
+        with UnitOfWork() as unit_of_work:
+            repo = MoviesRepository(unit_of_work.session)
+            if repo.is_database_empty():
+                logging.info("Empty Data Base. Collecting 100 movies sample.")
+                for movie in movies_data:
+                    if movie is not None:
+                        snake_case_movie = {
+                            camel_to_snake(key): value for key, value in movie.items()
+                        }
+                        repo.add(MovieModel(**snake_case_movie))
+                repo.session.commit()
+        logging.debug(f"Saved: \n {repo.get_all()}")
         logging.info("Program finished")
 
     except HTTPError as e:
         logging.error(f"HTTPError: {e}")
     except ConnectionError as e:
         logging.error(f"ConnectionError: {e}")
+    except ValueError as e:
+        logging.error(f"Error:", e)
     except Exception as e:
         logging.error(f"Error: {e}")
