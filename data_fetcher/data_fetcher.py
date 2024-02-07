@@ -115,7 +115,7 @@ if __name__ == "__main__":
             config.get("url"),
             config.get("parameters_global_search"),
             config.get("headers"),
-            limit=1,
+            config.get("movies_limit"),
         )
 
         # Complete movie data and filter out None values
