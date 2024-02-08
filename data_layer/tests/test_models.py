@@ -51,7 +51,6 @@ def test_movie_model(db_session):
         "box_office": "N/A",
         "production": "N/A",
         "website": "N/A",
-        "response": "True",
     }
 
     # Transform keys to snake case
@@ -95,4 +94,3 @@ def test_movie_model(db_session):
     assert retrieved_movie.box_office == movie_data["box_office"]
     assert retrieved_movie.production == movie_data["production"]
     assert retrieved_movie.website == movie_data["website"]
-    assert retrieved_movie.response == movie_data["response"]
