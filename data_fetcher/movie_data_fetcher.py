@@ -88,7 +88,6 @@ class MovieDataFetcher:
             dict: The JSON response containing movie data from the specified page.
         """
         parameters["page"] = page
-        response = session.get(url, headers=headers, params=parameters)
         response = await session.get(url, headers=headers, params=parameters)
         return await response.json()
 
