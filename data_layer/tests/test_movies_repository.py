@@ -84,28 +84,27 @@ def test_delete_movie_by_id(mock_session):
 
 
 def test_get_all_movies(mock_session):
-    # Mocking the query method of the session
-    query_mock = Mock()
-    type(mock_session).query = PropertyMock(return_value=query_mock)
 
-    # Mocking the limit method of the query
-    limit_mock = query_mock.limit.return_value
+    # Create movie instances
+    movie_instance_1 = MovieModel(imdb_id="tt0166222", title="Inception")
+    movie_instance_2 = MovieModel(imdb_id="tt6181728", title="Interstellar")
 
-    # Mocking the all() method to return movie instances
-    limit_mock.all.return_value = [
-        MovieModel(
-            imdb_id="tt1375666",
-            title="Inception",
-            year=2010,
-            director="Christopher Nolan",
-        ),
-        MovieModel(
-            imdb_id="tt0816692",
-            title="Interstellar",
-            year=2014,
-            director="Christopher Nolan",
-        ),
+    # Define the expected data
+    expected_data = [
+        {"imdbID": "tt0166222", "Title": "Inception"},
+        {"imdbID": "tt6181728", "Title": "Interstellar"},
     ]
+
+    # Mock the all() method of the query object to return a list of movie instances
+    query_mock = Mock()
+    query_mock.all.return_value = [movie_instance_1, movie_instance_2]
+
+    # Mock the limit method of the query object to return the query mock
+    query_limit_mock = Mock()
+    query_limit_mock.limit.return_value = query_mock
+
+    # Mock the query method of the session to return the query limit mock
+    mock_session.query.return_value = query_limit_mock
 
     # Create a repository instance with the mocked session
     movies_repo = MoviesRepository(mock_session)
@@ -115,11 +114,19 @@ def test_get_all_movies(mock_session):
 
     # Assert that the correct movies are returned
     assert len(movies) == 2
-    assert movies[0].title == "Inception"
-    assert movies[1].title == "Interstellar"
+    assert movies[0]["imdbID"] == expected_data[0]["imdbID"]
+    assert movies[0]["Title"] == expected_data[0]["Title"]
+    assert movies[1]["imdbID"] == expected_data[1]["imdbID"]
+    assert movies[1]["Title"] == expected_data[1]["Title"]
 
-    # Assert that the session's query method is called with the correct limit
-    query_mock.limit.assert_called_once_with(5)
+    # Assert that the query method of the session is called once with the correct arguments
+    mock_session.query.assert_called_once_with(MovieModel)
+
+    # Assert that the limit method of the query object is called once with the correct arguments
+    query_limit_mock.limit.assert_called_once_with(5)
+
+    # Assert that the all method of the query object is called once
+    query_mock.all.assert_called_once()
 
 
 def test_is_database_empty_returns_true_when_empty(mock_session):
