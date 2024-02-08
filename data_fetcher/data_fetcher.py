@@ -12,12 +12,28 @@ from data_layer.models import MovieModel, Base
 
 
 class MovieDataFetcher:
+    """
+    Class to fetch and save movie data.
+
+    Attributes:
+        config_file_path (str): The path to the configuration file.
+        alembic_config (str): The path to the Alembic configuration file.
+    """
 
     def __init__(
         self,
         config_file_path="data_fetcher/fetcher_config.json",
         alembic_config="alembic.ini",
     ):
+        """
+        Initializes the MovieDataFetcher.
+
+        Args:
+            config_file_path (str, optional): The path to the configuration file.
+                Defaults to "data_fetcher/fetcher_config.json".
+            alembic_config (str, optional): The path to the Alembic configuration file.
+                Defaults to "alembic.ini".
+        """
         self.config = self.load_config(config_file_path)
         self.database_url = self.get_database_url_from_alembic_config(alembic_config)
         self.engine = create_engine(self.database_url)
@@ -25,10 +41,28 @@ class MovieDataFetcher:
 
     @staticmethod
     def load_config(config_file_path):
+        """
+        Load configuration from file.
+
+        Args:
+            config_file_path (str): The path to the configuration file.
+
+        Returns:
+            dict: The loaded configuration.
+        """
         with open(config_file_path, "r") as file:
             return json.load(file)
 
     def get_database_url_from_alembic_config(self, alembic_config):
+        """
+        Get database URL from Alembic configuration.
+
+        Args:
+            alembic_config (str): The path to the Alembic configuration file.
+
+        Returns:
+            str: The database URL.
+        """
         alembic_cfg = Config(alembic_config)
         database_url = alembic_cfg.get_section_option("alembic", "sqlalchemy.url")
         if database_url is None:
@@ -39,6 +73,18 @@ class MovieDataFetcher:
 
     @staticmethod
     def fetch_movies_data(url, parameters, headers, limit=100):
+        """
+        Fetch movie data from the OMDB API.
+
+        Args:
+            url (str): The URL of the OMDB API.
+            parameters (dict): The parameters for the API request.
+            headers (dict): The headers for the API request.
+            limit (int, optional): The maximum number of movies to fetch. Defaults to 100.
+
+        Returns:
+            list: A list containing movie data fetched from the OMDB API.
+        """
         logging.info("Data fetch started")
         session = Session()
         movies_data_list = [None] * limit
@@ -65,6 +111,18 @@ class MovieDataFetcher:
 
     @staticmethod
     async def fetch_movie_data_by_imdb_id(url, parameters, headers, imdb_id):
+        """
+        Fetch movie data by IMDb ID from the OMDB API.
+
+        Args:
+            url (str): The URL of the OMDB API.
+            parameters (dict): The parameters for the API request.
+            headers (dict): The headers for the API request.
+            imdb_id (str): The IMDb ID of the movie.
+
+        Returns:
+            dict: Movie data fetched from the OMDB API.
+        """
         parameters["i"] = imdb_id
         async with aiohttp.ClientSession() as session:
             response = await session.get(url, headers=headers, params=parameters)
@@ -79,12 +137,28 @@ class MovieDataFetcher:
 
     @staticmethod
     def camel_to_snake(name):
+        """
+        Convert camelCase string to snake_case.
+
+        Args:
+            name (str): The string to convert.
+
+        Returns:
+            str: The converted string in snake_case.
+        """
         import re
 
         s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
         return re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
 
     async def fetch_and_save_movies_data(self, movie_title, limit=100):
+        """
+        Fetch and save movie data.
+
+        Args:
+            movie_title (str): The title of the movie to fetch.
+            limit (int, optional): The maximum number of movies to fetch. Defaults to 100.
+        """
         with UnitOfWork() as unit_of_work:
             repo = MoviesRepository(unit_of_work.session)
             parameters_global_search = self.config.get("parameters_global_search")
