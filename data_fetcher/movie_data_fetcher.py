@@ -98,8 +98,11 @@ class MovieDataFetcher:
             response.raise_for_status()
             if response.status_code == 200:
                 json_data = response.json()
-                if json_data.get("Response") != True:
-                    raise Exception(json_data.get("Error"))
+                if json_data.get("Response") != "True":
+                    raise Exception(
+                        f"Error ({response.status_code}) : {json_data.get('Error')}"
+                    )
+                json_data = response.json().get("Search")
 
                 start = page * PAGE_SIZE
                 end = (page + 1) * PAGE_SIZE
@@ -210,7 +213,7 @@ class MovieDataFetcher:
 
 if __name__ == "__main__":
     try:
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.DEBUG)
         fetcher = MovieDataFetcher()
         with UnitOfWork() as unit_of_work:
             repo = MoviesRepository(unit_of_work.session)
