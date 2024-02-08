@@ -2,6 +2,7 @@ import aiohttp
 import asyncio
 import json
 import logging
+
 from requests import Session
 from requests.exceptions import HTTPError
 from sqlalchemy import create_engine
@@ -72,7 +73,27 @@ class MovieDataFetcher:
         return database_url
 
     @staticmethod
-    def fetch_movies_data(url, parameters, headers, limit=100):
+    async def fetch_page(session, url, parameters, headers, page=1):
+        """
+        Fetch a page of movie data from the OMDB API.
+
+        Args:
+            session (aiohttp.ClientSession): The aiohttp session for making HTTP requests.
+            url (str): The URL of the OMDB API.
+            parameters (dict): The parameters for the API request.
+            headers (dict): The headers for the API request.
+            page (int, optional): The page number to fetch. Defaults to 1.
+
+        Returns:
+            dict: The JSON response containing movie data from the specified page.
+        """
+        parameters["page"] = page
+        response = session.get(url, headers=headers, params=parameters)
+        response = await session.get(url, headers=headers, params=parameters)
+        return await response.json()
+
+    @staticmethod
+    async def fetch_movies_data(url, parameters, headers, limit=100):
         """
         Fetch movie data from the OMDB API.
 
@@ -86,29 +107,55 @@ class MovieDataFetcher:
             list: A list containing movie data fetched from the OMDB API.
         """
         logging.info("Data fetch started")
-        session = Session()
-        movies_data_list = [None] * limit
-        PAGE_SIZE = 10
-        pages = limit // PAGE_SIZE + 1
-        for page in range(pages):
-            parameters["page"] = page + 1
-            response = session.get(url, headers=headers, params=parameters)
-            logging.debug(f"Status code : {response.status_code}")
-            logging.debug(f"Response : {response.text}")
-            response.raise_for_status()
-            if response.status_code == 200:
-                json_data = response.json()
-                if json_data.get("Response") != "True":
-                    raise Exception(
-                        f"Error ({response.status_code}) : {json_data.get('Error')}"
-                    )
-                json_data = response.json().get("Search")
 
-                start = page * PAGE_SIZE
-                end = (page + 1) * PAGE_SIZE
-                movies_data_list[start:end] = json_data[:PAGE_SIZE]
-                if limit <= end:
-                    break
+        PAGE_SIZE = 10
+        movies_data_list = [None] * limit
+
+        # First request
+        async with aiohttp.ClientSession() as session:
+            response = await MovieDataFetcher.fetch_page(
+                session, url, parameters, headers
+            )
+            total_results = int(response.get("totalResults", 0))
+
+            # Check data in response
+            if total_results == 0:
+                logging.warning("No results found.")
+                return []
+
+            if response.get("Response") != "True":
+                raise Exception(f"Error: {response.get('Error')}")
+
+            # Save movies data
+            movies_data = response.get("Search", [])
+            movies_data_list[0 : len(movies_data)] = movies_data[: len(movies_data)]
+
+            # Calculate remaining request needed to gather all needed movies data
+            remaining_results = max(limit - PAGE_SIZE, 0)
+            remaining_requests = (remaining_results // PAGE_SIZE) + min(
+                1, remaining_results % PAGE_SIZE
+            )
+
+            # Fetch remaining request concurrently
+            tasks = []
+            page = 1
+            for _ in range(remaining_requests):
+                page += 1
+                parameters["page"] = page
+                tasks.append(
+                    MovieDataFetcher.fetch_page(session, url, parameters, headers, page)
+                )
+
+            additional_movies_data = await asyncio.gather(*tasks)
+
+            # Save remaining data
+            idx = PAGE_SIZE
+            for response in additional_movies_data:
+                movies_data = response.get("Search", [])
+                if movies_data:
+                    movies_data_list[idx : idx + len(movies_data)] = movies_data
+                    idx += len(movies_data)
+
         logging.info(f"Read {len(movies_data_list)} movies.")
         return movies_data_list[:limit]
 
@@ -166,7 +213,7 @@ class MovieDataFetcher:
             repo = MoviesRepository(unit_of_work.session)
             parameters_global_search = self.config.get("parameters_global_search")
             parameters_global_search["s"] = movie_title
-            movies_data = self.fetch_movies_data(
+            movies_data = await self.fetch_movies_data(
                 self.config.get("url"),
                 parameters_global_search,
                 self.config.get("headers"),
@@ -219,7 +266,8 @@ if __name__ == "__main__":
             repo = MoviesRepository(unit_of_work.session)
             if repo.is_database_empty():  # Requires the database to be initilized
                 asyncio.run(fetcher.fetch_and_save_movies_data("disney"))
-
+            else:
+                logging.info("Database is not empty. Program terminated")
     except HTTPError as e:
         logging.error(f"HTTPError: {e}")
     except ConnectionError as e:
