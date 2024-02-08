@@ -1,3 +1,5 @@
+import aiohttp
+import asyncio
 import json
 import logging
 from requests import Session
@@ -41,37 +43,39 @@ class MovieDataFetcher:
         session = Session()
         movies_data_list = [None] * limit
         PAGE_SIZE = 10
-        for page in range(limit // PAGE_SIZE):
+        pages = limit // PAGE_SIZE + 1
+        for page in range(pages):
             parameters["page"] = page + 1
             response = session.get(url, headers=headers, params=parameters)
             logging.debug(f"Status code : {response.status_code}")
             logging.debug(f"Response : {response.text}")
             response.raise_for_status()
             if response.status_code == 200:
-                json_data = json.loads(response.text).get("Search")
+                json_data = response.json()
+                if json_data.get("Response") != True:
+                    raise Exception(json_data.get("Error"))
+
                 start = page * PAGE_SIZE
                 end = (page + 1) * PAGE_SIZE
                 movies_data_list[start:end] = json_data[:PAGE_SIZE]
                 if limit <= end:
                     break
         logging.info(f"Read {len(movies_data_list)} movies.")
-        logging.info("Data fetch finished")
         return movies_data_list[:limit]
 
     @staticmethod
-    def fetch_movie_data_by_imdb_id(url, parameters, headers, imdb_id):
-        logging.info("Data fetch started")
+    async def fetch_movie_data_by_imdb_id(url, parameters, headers, imdb_id):
         parameters["i"] = imdb_id
-        session = Session()
-        response = session.get(url, headers=headers, params=parameters)
-        logging.debug(f"Status code : {response.status_code}")
-        logging.debug(f"Response : {response.text}")
-        response.raise_for_status()
-        if response.status_code == 200:
-            json_data = json.loads(response.text)
-            logging.debug(f"Data: {json_data}")
-            logging.info("Data fetch finished")
-            return json_data
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url, headers=headers, params=parameters)
+            response_json = await response.json()
+
+            logging.debug(f"Status code : {response.status}")
+            logging.debug(f"Response : {response_json}")
+
+            if response.status == 200:
+                return response_json
+            return None
 
     @staticmethod
     def camel_to_snake(name):
@@ -80,7 +84,7 @@ class MovieDataFetcher:
         s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
         return re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
 
-    def fetch_and_save_movies_data(self, movie_title, limit=1):
+    async def fetch_and_save_movies_data(self, movie_title, limit=100):
         with UnitOfWork() as unit_of_work:
             repo = MoviesRepository(unit_of_work.session)
             parameters_global_search = self.config.get("parameters_global_search")
@@ -92,17 +96,30 @@ class MovieDataFetcher:
                 limit,
             )
             counter = 0
-            for movie in movies_data[:limit]:
-                if movie is not None:
-                    imdb_id = movie.get("imdbID")
-                    existing_movie = repo.get_by_id(imdb_id)
-                    if not existing_movie:
-                        movie_data = self.fetch_movie_data_by_imdb_id(
-                            self.config.get("url"),
-                            self.config.get("parameters_featch_by_id"),
-                            self.config.get("headers"),
-                            imdb_id,
-                        )
+            if movies_data:
+                loop = asyncio.get_event_loop()
+                async with aiohttp.ClientSession() as session:
+                    tasks = []
+                    logging.info(f"Fetching detailed movies data...")
+                    for movie in movies_data:
+                        if movie is not None:
+                            imdb_id = movie.get("imdbID")
+                            existing_movie = repo.get_by_id(imdb_id)
+                            if not existing_movie:
+                                tasks.append(
+                                    loop.create_task(
+                                        self.fetch_movie_data_by_imdb_id(
+                                            self.config.get("url"),
+                                            self.config.get("parameters_featch_by_id"),
+                                            self.config.get("headers"),
+                                            imdb_id,
+                                        )
+                                    )
+                                )
+                    logging.info(f"All request running, waiting for responses...")
+
+                    for result in asyncio.as_completed(tasks):
+                        movie_data = await result
                         if movie_data:
                             snake_case_movie = {
                                 self.camel_to_snake(key): value
@@ -113,18 +130,18 @@ class MovieDataFetcher:
                             repo.add(MovieModel(**snake_case_movie))
                             logging.debug(f"Added: {snake_case_movie}")
                             counter += 1
-            repo.session.commit()
+                    repo.session.commit()
             logging.info(f"Saved {counter} new films.")
 
 
 if __name__ == "__main__":
     try:
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(level=logging.INFO)
         fetcher = MovieDataFetcher()
         with UnitOfWork() as unit_of_work:
             repo = MoviesRepository(unit_of_work.session)
             if repo.is_database_empty():  # Requires the database to be initilized
-                fetcher.fetch_and_save_movies_data("disney", 20)
+                asyncio.run(fetcher.fetch_and_save_movies_data("disney"))
 
     except HTTPError as e:
         logging.error(f"HTTPError: {e}")
