@@ -1,14 +1,14 @@
 import aiohttp
 import asyncio
-import json
+
 import logging
 
 from requests.exceptions import HTTPError
 from sqlalchemy import create_engine
-from alembic.config import Config
 from data_layer.unit_of_work import UnitOfWork
 from data_layer.movies_repository import MoviesRepository
 from data_layer.models import MovieModel, Base
+from common import utils
 
 
 class MovieDataFetcher:
@@ -34,42 +34,10 @@ class MovieDataFetcher:
             alembic_config (str, optional): The path to the Alembic configuration file.
                 Defaults to "alembic.ini".
         """
-        self.config = self.load_config(config_file_path)
-        self.database_url = self.get_database_url_from_alembic_config(alembic_config)
+        self.config = utils.load_config(config_file_path)
+        self.database_url = utils.get_database_url_from_alembic_config(alembic_config)
         self.engine = create_engine(self.database_url)
         Base.metadata.create_all(self.engine)
-
-    @staticmethod
-    def load_config(config_file_path):
-        """
-        Load configuration from file.
-
-        Args:
-            config_file_path (str): The path to the configuration file.
-
-        Returns:
-            dict: The loaded configuration.
-        """
-        with open(config_file_path, "r") as file:
-            return json.load(file)
-
-    def get_database_url_from_alembic_config(self, alembic_config):
-        """
-        Get database URL from Alembic configuration.
-
-        Args:
-            alembic_config (str): The path to the Alembic configuration file.
-
-        Returns:
-            str: The database URL.
-        """
-        alembic_cfg = Config(alembic_config)
-        database_url = alembic_cfg.get_section_option("alembic", "sqlalchemy.url")
-        if database_url is None:
-            raise ValueError(
-                "Database URL is missing or could not be retrieved from Alembic configuration"
-            )
-        return database_url
 
     @staticmethod
     async def fetch_page(session, url, parameters, headers, page=1):
