@@ -3,7 +3,6 @@ import asyncio
 import json
 import logging
 
-from requests import Session
 from requests.exceptions import HTTPError
 from sqlalchemy import create_engine
 from alembic.config import Config
@@ -87,12 +86,13 @@ class MovieDataFetcher:
         Returns:
             dict: The JSON response containing movie data from the specified page.
         """
+        logging.info(f"Fetching Page: {page: <4}")
         parameters["page"] = page
         response = await session.get(url, headers=headers, params=parameters)
         return await response.json()
 
     @staticmethod
-    async def fetch_movies_data(url, parameters, headers, limit=100):
+    async def fetch_movies_data(session, url, parameters, headers, limit=100):
         """
         Fetch movie data from the OMDB API.
 
@@ -105,61 +105,59 @@ class MovieDataFetcher:
         Returns:
             list: A list containing movie data fetched from the OMDB API.
         """
-        logging.info("Data fetch started")
+        logging.info(f"Data fetch started with search param : {parameters.get('s')}")
 
         PAGE_SIZE = 10
         movies_data_list = [None] * limit
 
         # First request
-        async with aiohttp.ClientSession() as session:
-            response = await MovieDataFetcher.fetch_page(
-                session, url, parameters, headers
+        response = await MovieDataFetcher.fetch_page(session, url, parameters, headers)
+
+        if response.get("Response") != "True":
+            raise Exception(f"Error: {response.get('Error')}")
+
+        total_results = int(response.get("totalResults", 0))
+
+        # Check data in response
+        if total_results == 0:
+            logging.warning("No results found.")
+            return []
+
+        # Save movies data
+        movies_data = response.get("Search", [])
+        movies_data_list[0 : len(movies_data)] = movies_data[: len(movies_data)]
+
+        # Calculate remaining request needed to gather all needed movies data
+        remaining_results = max(limit - PAGE_SIZE, 0)
+        remaining_requests = (remaining_results // PAGE_SIZE) + min(
+            1, remaining_results % PAGE_SIZE
+        )
+
+        # Fetch remaining request concurrently
+        tasks = []
+        page = 1
+        for _ in range(remaining_requests):
+            page += 1
+            parameters["page"] = page
+            tasks.append(
+                MovieDataFetcher.fetch_page(session, url, parameters, headers, page)
             )
-            total_results = int(response.get("totalResults", 0))
 
-            # Check data in response
-            if total_results == 0:
-                logging.warning("No results found.")
-                return []
+        additional_movies_data = await asyncio.gather(*tasks)
 
-            if response.get("Response") != "True":
-                raise Exception(f"Error: {response.get('Error')}")
-
-            # Save movies data
+        # Save remaining data
+        idx = PAGE_SIZE
+        for response in additional_movies_data:
             movies_data = response.get("Search", [])
-            movies_data_list[0 : len(movies_data)] = movies_data[: len(movies_data)]
-
-            # Calculate remaining request needed to gather all needed movies data
-            remaining_results = max(limit - PAGE_SIZE, 0)
-            remaining_requests = (remaining_results // PAGE_SIZE) + min(
-                1, remaining_results % PAGE_SIZE
-            )
-
-            # Fetch remaining request concurrently
-            tasks = []
-            page = 1
-            for _ in range(remaining_requests):
-                page += 1
-                parameters["page"] = page
-                tasks.append(
-                    MovieDataFetcher.fetch_page(session, url, parameters, headers, page)
-                )
-
-            additional_movies_data = await asyncio.gather(*tasks)
-
-            # Save remaining data
-            idx = PAGE_SIZE
-            for response in additional_movies_data:
-                movies_data = response.get("Search", [])
-                if movies_data:
-                    movies_data_list[idx : idx + len(movies_data)] = movies_data
-                    idx += len(movies_data)
+            if movies_data:
+                movies_data_list[idx : idx + len(movies_data)] = movies_data
+                idx += len(movies_data)
 
         logging.info(f"Read {len(movies_data_list)} movies.")
         return movies_data_list[:limit]
 
     @staticmethod
-    async def fetch_movie_data_by_imdb_id(url, parameters, headers, imdb_id):
+    async def fetch_movie_data_by_imdb_id(session, url, parameters, headers, imdb_id):
         """
         Fetch movie data by IMDb ID from the OMDB API.
 
@@ -173,16 +171,15 @@ class MovieDataFetcher:
             dict: Movie data fetched from the OMDB API.
         """
         parameters["i"] = imdb_id
-        async with aiohttp.ClientSession() as session:
-            response = await session.get(url, headers=headers, params=parameters)
-            response_json = await response.json()
+        response = await session.get(url, headers=headers, params=parameters)
+        response_json = await response.json()
 
-            logging.debug(f"Status code : {response.status}")
-            logging.debug(f"Response : {response_json}")
+        logging.debug(f"Status code : {response.status}")
+        logging.debug(f"Response : {response_json}")
 
-            if response.status == 200:
-                return response_json
-            return None
+        if response.status == 200:
+            return response_json
+        return {}
 
     @staticmethod
     def camel_to_snake(name):
@@ -212,16 +209,17 @@ class MovieDataFetcher:
             repo = MoviesRepository(unit_of_work.session)
             parameters_global_search = self.config.get("parameters_global_search")
             parameters_global_search["s"] = movie_title
-            movies_data = await self.fetch_movies_data(
-                self.config.get("url"),
-                parameters_global_search,
-                self.config.get("headers"),
-                limit,
-            )
-            counter = 0
-            if movies_data:
-                loop = asyncio.get_event_loop()
-                async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession() as session:
+                movies_data = await self.fetch_movies_data(
+                    session,
+                    self.config.get("url"),
+                    parameters_global_search,
+                    self.config.get("headers"),
+                    limit,
+                )
+                counter = 0
+                if movies_data:
+                    loop = asyncio.get_event_loop()
                     tasks = []
                     logging.info(f"Fetching detailed movies data...")
                     for movie in movies_data:
@@ -232,6 +230,7 @@ class MovieDataFetcher:
                                 tasks.append(
                                     loop.create_task(
                                         self.fetch_movie_data_by_imdb_id(
+                                            session,
                                             self.config.get("url"),
                                             self.config.get("parameters_featch_by_id"),
                                             self.config.get("headers"),
@@ -254,12 +253,12 @@ class MovieDataFetcher:
                             logging.debug(f"Added: {snake_case_movie}")
                             counter += 1
                     repo.session.commit()
-            logging.info(f"Saved {counter} new films.")
+                logging.info(f"Saved {counter} new films.")
 
 
 if __name__ == "__main__":
     try:
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(level=logging.INFO)
         fetcher = MovieDataFetcher()
         with UnitOfWork() as unit_of_work:
             repo = MoviesRepository(unit_of_work.session)
