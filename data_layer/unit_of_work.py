@@ -3,8 +3,9 @@ from sqlalchemy.orm import sessionmaker
 
 
 class UnitOfWork:
-    def __init__(self):
-        self.session_maker = sessionmaker(bind=create_engine("sqlite:///movies.db"))
+
+    def __init__(self, database="sqlite:///:memory:"):
+        self.session_maker = sessionmaker(bind=create_engine(database))
 
     def __enter__(self):
         self.session = self.session_maker()

@@ -174,7 +174,7 @@ class MovieDataFetcher:
             movie_title (str): The title of the movie to fetch.
             limit (int, optional): The maximum number of movies to fetch. Defaults to 100.
         """
-        with UnitOfWork() as unit_of_work:
+        with UnitOfWork(self.database_url) as unit_of_work:
             repo = MoviesRepository(unit_of_work.session)
             parameters_global_search = self.config.get("parameters_global_search")
             parameters_global_search["s"] = movie_title
