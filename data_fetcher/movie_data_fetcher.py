@@ -229,7 +229,8 @@ if __name__ == "__main__":
     try:
         logging.basicConfig(level=logging.INFO)
         fetcher = MovieDataFetcher()
-        with UnitOfWork() as unit_of_work:
+        database_url = utils.get_database_url_from_alembic_config()
+        with UnitOfWork(database_url) as unit_of_work:
             repo = MoviesRepository(unit_of_work.session)
             if repo.is_database_empty():  # Requires the database to be initilized
                 asyncio.run(fetcher.fetch_and_save_movies_data("disney"))
