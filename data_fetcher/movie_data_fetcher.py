@@ -125,7 +125,8 @@ class MovieDataFetcher:
 
         # Save movies data
         movies_data = response.get("Search", [])
-        movies_data_list[0 : len(movies_data)] = movies_data[: len(movies_data)]
+        received_movies_data = len(movies_data)
+        movies_data_list[0:received_movies_data] = movies_data[:received_movies_data]
 
         # Calculate remaining request needed to gather all needed movies data
         remaining_results = max(limit - PAGE_SIZE, 0)
@@ -146,7 +147,7 @@ class MovieDataFetcher:
         additional_movies_data = await asyncio.gather(*tasks)
 
         # Save remaining data
-        idx = PAGE_SIZE
+        idx = received_movies_data
         for response in additional_movies_data:
             movies_data = response.get("Search", [])
             if movies_data:
@@ -154,7 +155,7 @@ class MovieDataFetcher:
                 idx += len(movies_data)
 
         logging.info(f"Read {len(movies_data_list)} movies.")
-        return movies_data_list[:limit]
+        return movies_data_list[:idx]
 
     @staticmethod
     async def fetch_movie_data_by_imdb_id(session, url, parameters, headers, imdb_id):
