@@ -1,0 +1,193 @@
+openapi: 3.0.0
+info:
+  title: Movie API
+  description: API to manage movie data
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+paths:
+  /movies:
+    get:
+      summary: Get a list of movies
+      description: Returns a list of movies from the database.
+      parameters:
+        - in: query
+          name: limit
+          description: The maximum number of movies to return (default: 10).
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+        - in: query
+          name: page
+          description: The page number of results (default: 1).
+          schema:
+            type: integer
+            minimum: 1
+          required: false
+      responses:
+        '200':
+          description: A list of movies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MovieModel'
+        '500':
+          description: Internal server error
+  /movies/{title}:
+    get:
+      summary: Get movie by title
+      description: Returns a single movie's data based on its title.
+      parameters:
+        - in: path
+          name: title
+          description: The title of the movie to retrieve.
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Movie found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieModel'
+        '404':
+          description: Movie not found
+        '500':
+          description: Internal server error
+    post:
+      summary: Add a new movie
+      description: Adds a new movie to the database based on the provided title.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+              required:
+                - title
+      responses:              
+        '201':
+          description: Movie added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieModel'
+        '422':
+          description: Unprocessable entity (e.g., invalid data)
+        '500':
+          description: Internal server error
+  /movies/{imdb_id}:
+    delete:
+      summary: Delete movie by IMDb ID
+      description: Deletes a movie from the database based on its IMDb ID.
+      parameters:
+        - in: path
+          name: imdb_id
+          description: The IMDb ID of the movie to delete.
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: Movie deleted successfully
+        '404':
+          description: Movie not found
+        '500':
+          description: Internal server error
+components:
+  schemas:
+     MovieModel:
+      type: object
+      properties:
+        imdb_id:
+          type: string
+          description: The IMDb ID of the movie (primary key).
+        title:
+          type: string
+          description: The title of the movie.
+        year:
+          type: string
+          description: The release year of the movie.
+        rated:
+          type: string
+          description: The rating of the movie.
+        released:
+          type: string
+          description: The release date of the movie.
+        runtime:
+          type: string
+          description: The duration of the movie.
+        genre:
+          type: string
+          description: The genre of the movie.
+        director:
+          type: string
+          description: The director(s) of the movie.
+        writer:
+          type: string
+          description: The writer(s) of the movie.
+        actors:
+          type: string
+          description: The actor(s) of the movie.
+        plot:
+          type: string
+          description: The plot summary of the movie.
+        language:
+          type: string
+          description: The language of the movie.
+        country:
+          type: string
+          description: The country where the movie was produced.
+        awards:
+          type: string
+          description: The awards received by the movie.
+        poster:
+          type: string
+          description: The URL of the movie poster.
+        ratings:
+          type: array
+          items:
+            type: object
+            properties:
+              source:
+                type: string
+              value:
+                type: string
+          description: The ratings received by the movie.
+        metascore:
+          type: string
+          description: The metascore of the movie.
+        imdb_rating:
+          type: string
+          description: The IMDb rating of the movie.
+        imdb_votes:
+          type: string
+          description: The number of IMDb votes received by the movie.
+        type:
+          type: string
+          description: The type of the movie (e.g., movie, series).
+        dvd:
+          type: string
+          description: The DVD release date of the movie.
+        box_office:
+          type: string
+          description: The box office earnings of the movie.
+        production:
+          type: string
+          description: The production company of the movie.
+        website:
+          type: string
+          description: The official website of the movie.
+        response:
+          type: string
+          description: The response status of the movie.
+      required:
+        - imdb_id
+        - title
