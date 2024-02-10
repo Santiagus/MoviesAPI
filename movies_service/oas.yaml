@@ -4,7 +4,7 @@ info:
   description: API to manage movie data
   version: 1.0.0
 servers:
-  - url: http://localhost:8000
+  - url: http://127.0.0.1:8000
 paths:
   /movies:
     get:
@@ -13,14 +13,14 @@ paths:
       parameters:
         - in: query
           name: limit
-          description: The maximum number of movies to return (default: 10).
+          description: The maximum number of movies to return (default 10).
           schema:
             type: integer
             minimum: 1
           required: false
         - in: query
           name: page
-          description: The page number of results (default: 1).
+          description: The page number of results (default 1).
           schema:
             type: integer
             minimum: 1
@@ -36,7 +36,7 @@ paths:
                   $ref: '#/components/schemas/MovieModel'
         '500':
           description: Internal server error
-  /movies/{title}:
+  /movie/{title}:
     get:
       summary: Get movie by title
       description: Returns a single movie's data based on its title.
@@ -61,17 +61,13 @@ paths:
     post:
       summary: Add a new movie
       description: Adds a new movie to the database based on the provided title.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-              required:
-                - title
+      parameters:
+        - in: path
+          name: title
+          description: The title of the movie to retrieve.
+          schema:
+            type: string
+          required: true
       responses:              
         '201':
           description: Movie added successfully
@@ -83,7 +79,7 @@ paths:
           description: Unprocessable entity (e.g., invalid data)
         '500':
           description: Internal server error
-  /movies/{imdb_id}:
+  /movie/{imdb_id}:
     delete:
       summary: Delete movie by IMDb ID
       description: Deletes a movie from the database based on its IMDb ID.
