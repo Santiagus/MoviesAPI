@@ -85,4 +85,10 @@ async def add_movie(title: str):
 
 @app.delete("/movie/{imdb_id}")
 async def delete_movie(imdb_id: str):
-    return {"Deleted": imdb_id}
+    with UnitOfWork(app.state.database_url) as unit_of_work:
+        repo = MoviesRepository(unit_of_work.session)
+        result = repo.delete_by_id(imdb_id)
+        if result:
+            return {"message": f"Movie with ID {imdb_id} was deleted successfully"}
+        logging.warning("Movie not found in the database")
+        raise HTTPException(status_code=404, detail="Movie not found in the database")
