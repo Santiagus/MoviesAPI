@@ -1,4 +1,8 @@
+import logging
+from fastapi import HTTPException, Query
+from data_layer.unit_of_work import UnitOfWork
 from movies_service.app import app
+from data_layer.movies_repository import MoviesRepository
 
 # Static movies info  for testing purpose
 movies_data = [
@@ -36,8 +40,20 @@ movies_data = [
 
 
 @app.get("/movies")
-def get_all_movies():
-    return movies_data
+async def get_all_movies(
+    limit: int = Query(10, title="The number of movies to retrieve", ge=1),
+    page: int = Query(1, title="Results page", ge=1),
+):
+    with UnitOfWork(app.state.database_url) as unit_of_work:
+        repo = MoviesRepository(unit_of_work.session)
+        if not repo.is_database_empty():
+            offset = (page - 1) * limit
+            return repo.get_all(offset, limit)
+        else:
+            logging.warning("Movies not found in the database")
+            raise HTTPException(
+                status_code=404, detail="Movies not found in the database"
+            )
 
 
 @app.get("/movie/{title}")
