@@ -31,8 +31,8 @@ class MoviesRepository:
             .one_or_none()
         )
 
-    def get_all(self, limit=100):
-        movies = self.session.query(MovieModel).limit(limit).all()
+    def get_all(self, offset=0, limit=100):
+        movies = self.session.query(MovieModel).offset(offset).limit(limit).all()
         return [movie.to_dict() for movie in movies]
 
     def delete_by_id(self, imdb_id):
