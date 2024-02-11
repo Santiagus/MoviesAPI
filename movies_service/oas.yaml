@@ -1,7 +1,18 @@
 openapi: 3.0.0
 info:
   title: Movie API
-  description: API to manage movie data
+  description: |
+    The Movies API allows to access and save movies detailed information.
+
+    ### Check out its awesome features:
+
+    * Get a list of all movies in the database
+    * Get a movie detailed information by title
+    * Add a new movie indicating a title
+    * Delete a movie from the database (only authorized by API_KEY)
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
   version: 1.0.0
 servers:
   - url: http://127.0.0.1:8000
