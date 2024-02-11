@@ -1,4 +1,6 @@
 from data_layer.models import MovieModel
+from sqlalchemy.exc import OperationalError
+import logging
 
 
 class MoviesRepository:
@@ -7,12 +9,20 @@ class MoviesRepository:
 
     def is_database_empty(self):
         """
-        Check if the MovieModel table is empty.
+        Check if the MovieModel table exists and it is empty
         Returns:
-            bool: True if the table is empty, False otherwise.
+            bool: True if the table is empty or it does not exists, False otherwise.
         """
-        num_records = self.session.query(MovieModel).count()
-        return num_records == 0
+        try:
+            num_records = self.session.query(MovieModel).count()
+            return num_records == 0
+        except OperationalError:
+            # Handle the case where the table does not exist
+            logging.info("The movies table does not exist in the database.")
+            return True
+        except Exception as e:
+            logging.error(f"Error : {e}")
+            return True
 
     def add(self, movie):
         self.session.add(movie)
