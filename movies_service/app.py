@@ -47,7 +47,7 @@ async def lifespan(app: FastAPI):
         # Shutdown (Close connections to db, ...)
 
 
-app = FastAPI(title="Your API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="Movies API", version="1.0.0", lifespan=lifespan)
 
 with open("movies_service/oas.yaml", "r") as file:
     oas_doc = yaml.safe_load(file)
