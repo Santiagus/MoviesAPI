@@ -5,6 +5,9 @@ import logging.config
 import yaml
 
 from common import utils
+from data_fetcher.movie_data_fetcher import MovieDataFetcher
+from data_layer.unit_of_work import UnitOfWork
+from data_layer.movies_repository import MoviesRepository
 
 
 @asynccontextmanager
@@ -39,6 +42,17 @@ async def lifespan(app: FastAPI):
         logging.info(f"Service start. Loading configuration...")
 
         app.state.database_url = utils.get_database_url_from_alembic_config()
+
+        # Database initilization
+        with UnitOfWork(app.state.database_url) as unit_of_work:
+            repo = MoviesRepository(unit_of_work.session)
+            if repo.is_database_empty():
+                app.state.mdf = MovieDataFetcher()
+                result = await app.state.mdf.fetch_and_save_movies_data("Disney")
+                if result:
+                    logging.info(
+                        f"Added {len (result)} movies to database during startup"
+                    )
 
     except Exception as e:
         logging.error(f"An unexpected error occurred during startup: {e}")

@@ -3,7 +3,6 @@ from fastapi import HTTPException, Query, Depends, status, Header
 from data_layer.unit_of_work import UnitOfWork
 from movies_service.app import app
 from data_layer.movies_repository import MoviesRepository
-from data_fetcher import movie_data_fetcher
 from fastapi.security.api_key import APIKeyHeader
 
 # Static movies info  for testing purpose
@@ -79,8 +78,7 @@ async def get_movie(title: str):
 
 @app.post("/movie/{title}")
 async def add_movie(title: str):
-    mdf = movie_data_fetcher.MovieDataFetcher()
-    result = await mdf.fetch_and_save_movies_data(title, limit=1)
+    result = await app.state.mdf.fetch_and_save_movies_data(title, limit=1)
     return {"Saved": result}
 
 
