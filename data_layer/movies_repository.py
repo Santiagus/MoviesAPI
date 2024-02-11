@@ -43,9 +43,9 @@ class MoviesRepository:
                 # Delete the movie if found
                 self.session.delete(movie)
                 self.session.commit()
-                return True, "Movie deleted successfully"
+                return True
             else:
-                return False, "Movie not found"
+                return False
         except Exception as e:
             # Handle exceptions
             self.session.rollback()
