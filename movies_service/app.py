@@ -4,6 +4,8 @@ import logging
 import logging.config
 import yaml
 
+from common import utils
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,6 +37,8 @@ async def lifespan(app: FastAPI):
             level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
         )
         logging.info(f"Service start. Loading configuration...")
+
+        app.state.database_url = utils.get_database_url_from_alembic_config()
 
     except Exception as e:
         logging.error(f"An unexpected error occurred during startup: {e}")
