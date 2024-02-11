@@ -3,6 +3,7 @@ from fastapi import HTTPException, Query
 from data_layer.unit_of_work import UnitOfWork
 from movies_service.app import app
 from data_layer.movies_repository import MoviesRepository
+from data_fetcher import movie_data_fetcher
 
 # Static movies info  for testing purpose
 movies_data = [
@@ -57,7 +58,7 @@ async def get_all_movies(
 
 
 @app.get("/movie/{title}")
-def get_movie(title: str):
+async def get_movie(title: str):
     with UnitOfWork(app.state.database_url) as unit_of_work:
         repo = MoviesRepository(unit_of_work.session)
         if not repo.is_database_empty():
@@ -76,10 +77,12 @@ def get_movie(title: str):
 
 
 @app.post("/movie/{title}")
-def add_movie(title: str):
-    return {"Added": movies_data[0]}
+async def add_movie(title: str):
+    mdf = movie_data_fetcher.MovieDataFetcher()
+    result = await mdf.fetch_and_save_movies_data(title, limit=1)
+    return {"Saved": result}
 
 
 @app.delete("/movie/{imdb_id}")
-def delete_movie(imdb_id: str):
+async def delete_movie(imdb_id: str):
     return {"Deleted": imdb_id}
