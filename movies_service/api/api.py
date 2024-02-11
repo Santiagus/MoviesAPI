@@ -58,7 +58,21 @@ async def get_all_movies(
 
 @app.get("/movie/{title}")
 def get_movie(title: str):
-    return movies_data[0]
+    with UnitOfWork(app.state.database_url) as unit_of_work:
+        repo = MoviesRepository(unit_of_work.session)
+        if not repo.is_database_empty():
+            movie = repo.get_by_title(title)
+            if not movie:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f'No exact match for "{title}" in the database.',
+                )
+            return movie
+        else:
+            logging.warning("Movie not found in the database")
+            raise HTTPException(
+                status_code=404, detail="Movie not found in the database"
+            )
 
 
 @app.post("/movie/{title}")
