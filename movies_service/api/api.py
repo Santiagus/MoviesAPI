@@ -1,9 +1,10 @@
 import logging
-from fastapi import HTTPException, Query
+from fastapi import HTTPException, Query, Depends, status, Header
 from data_layer.unit_of_work import UnitOfWork
 from movies_service.app import app
 from data_layer.movies_repository import MoviesRepository
 from data_fetcher import movie_data_fetcher
+from fastapi.security.api_key import APIKeyHeader
 
 # Static movies info  for testing purpose
 movies_data = [
@@ -83,8 +84,24 @@ async def add_movie(title: str):
     return {"Saved": result}
 
 
+# Dummy database of API keys
+api_keys = {"Movies_API_KEY_number_1"}
+
+
+def verify_api_key(api_key: str = Header(None)):
+    """Dependency function to verify the API key."""
+    if api_key not in api_keys:
+        raise HTTPException(status_code=401, detail="Invalid API key")
+
+
+# Define the API key security scheme
+APIKeyAuth = APIKeyHeader(name="Authorization", auto_error=False)
+
+
 @app.delete("/movie/{imdb_id}")
-async def delete_movie(imdb_id: str):
+async def delete_movie(imdb_id: str, api_key: str = Depends(APIKeyAuth)):
+    verify_api_key(api_key)
+
     with UnitOfWork(app.state.database_url) as unit_of_work:
         repo = MoviesRepository(unit_of_work.session)
         result = repo.delete_by_id(imdb_id)
