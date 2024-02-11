@@ -42,7 +42,13 @@ class MoviesRepository:
         )
 
     def get_all(self, offset=0, limit=100):
-        movies = self.session.query(MovieModel).offset(offset).limit(limit).all()
+        movies = (
+            self.session.query(MovieModel)
+            .order_by(MovieModel.title)
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )
         return [movie.to_dict() for movie in movies]
 
     def delete_by_id(self, imdb_id):
