@@ -174,6 +174,7 @@ class MovieDataFetcher:
             movie_title (str): The title of the movie to fetch.
             limit (int, optional): The maximum number of movies to fetch. Defaults to 100.
         """
+
         with UnitOfWork(self.database_url) as unit_of_work:
             repo = MoviesRepository(unit_of_work.session)
             parameters_global_search = self.config.get("parameters_global_search")
@@ -188,12 +189,18 @@ class MovieDataFetcher:
                 )
                 counter = 0
                 if movies_data:
+                    # Remove results beyond requested limit
+                    movies_data = movies_data[: min(limit, len(movies_data))]
+
                     loop = asyncio.get_event_loop()
                     tasks = []
+
                     logging.info(f"Fetching detailed movies data...")
                     for movie in movies_data:
                         if movie is not None:
                             imdb_id = movie.get("imdbID")
+
+                            # Feach detailed data only if movies does not exist in database
                             existing_movie = repo.get_by_id(imdb_id)
                             if not existing_movie:
                                 tasks.append(
@@ -209,6 +216,9 @@ class MovieDataFetcher:
                                 )
                     logging.info(f"All request running, waiting for responses...")
 
+                    saved_movies = [None] * len(movies_data)
+
+                    # Add detailed movie info to database
                     for result in asyncio.as_completed(tasks):
                         movie_data = await result
                         if movie_data:
@@ -219,10 +229,13 @@ class MovieDataFetcher:
                             if "response" in snake_case_movie:
                                 del snake_case_movie["response"]
                             repo.add(MovieModel(**snake_case_movie))
+                            saved_movies[counter] = snake_case_movie["title"]
                             logging.debug(f"Added: {snake_case_movie}")
                             counter += 1
                     repo.session.commit()
-                logging.info(f"Saved {counter} new films.")
+
+                    logging.info(f"Saved {counter} new films.")
+                    return saved_movies
 
 
 if __name__ == "__main__":
