@@ -1,6 +1,5 @@
 import pytest
 from fastapi.testclient import TestClient
-from data_layer.tests.test_movies_repository import mock_session
 from movies_service.app import app
 from unittest.mock import MagicMock, patch
 
@@ -23,7 +22,7 @@ def test_get_all_movies(test_app):
     test_app.app.state.database_url = "mocked_database_url"
 
     # Mocking the UnitOfWork class
-    with patch("movies_service.api.api.UnitOfWork") as MockUnitOfWork, patch(
+    with patch("movies_service.api.api.UnitOfWork"), patch(
         "movies_service.api.api.MoviesRepository"
     ) as MockMoviesRepository:
 
@@ -42,3 +41,29 @@ def test_get_all_movies(test_app):
 
         # Assert that the response body contains the expected movies data
         assert response.json() == movies_data
+
+
+def test_get_all_movies_empty_database(test_app):
+    # Mocking the app.state.database_url
+    test_app.app.state = MagicMock()
+    test_app.app.state.database_url = "mocked_database_url"
+
+    # Mocking the UnitOfWork class
+    with patch("movies_service.api.api.UnitOfWork"), patch(
+        "movies_service.api.api.MoviesRepository"
+    ) as MockMoviesRepository:
+
+        # mock_unit_of_work_instance = MockUnitOfWork.return_value
+        mock_repo_instance = MockMoviesRepository.return_value
+
+        # Set up the return value of is_database_empty and get_all methods
+        mock_repo_instance.is_database_empty.return_value = True
+
+        # Make the request to the endpoint
+        response = test_app.get("/movies")
+
+        # Assert that the response is successful
+        assert response.status_code == 404
+
+        # Assert that the response body contains the expected movies data
+        assert response.json() == {"detail": "Movies not found in the database"}
