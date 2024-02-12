@@ -39,12 +39,16 @@ class MoviesRepository:
             dict()
 
     def get_by_title(self, title):
-        return (
+        result = (
             self.session.query(MovieModel)
             .filter(MovieModel.title == title)
             .one_or_none()
-            .to_dict()
         )
+
+        if result:
+            return result.to_dict()
+        else:
+            dict()
 
     def get_all(self, offset=0, limit=100):
         movies = (
