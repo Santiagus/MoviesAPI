@@ -28,17 +28,22 @@ class MoviesRepository:
         self.session.add(movie)
 
     def get_by_id(self, imdb_id):
-        return (
+        result = (
             self.session.query(MovieModel)
             .filter(MovieModel.imdb_id == imdb_id)
             .one_or_none()
         )
+        if result:
+            return result.to_dict()
+        else:
+            dict()
 
     def get_by_title(self, title):
         return (
             self.session.query(MovieModel)
             .filter(MovieModel.title == title)
             .one_or_none()
+            .to_dict()
         )
 
     def get_all(self, offset=0, limit=100):
