@@ -48,6 +48,19 @@ def test_get_movie_by_id(mock_session):
         assert movie.get("Director") == "Christopher Nolan"
 
 
+def test_get_movie_by_id_no_match(mock_session):
+    # Mocking the query method of the session
+    mock_session.query().filter().one_or_none.return_value = None
+
+    # Create a repository instance with the mocked session
+    movies_repo = MoviesRepository(mock_session)
+
+    # Call the get_by_id method
+    movie = movies_repo.get_by_id("tt1375666")
+
+    assert movie == None
+
+
 def test_get_movie_by_title(mock_session):
     # Mocking the query method of the session
     mock_session.query().filter().one_or_none.return_value = MovieModel(
