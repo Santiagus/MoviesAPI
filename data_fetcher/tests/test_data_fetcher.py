@@ -319,24 +319,6 @@ def test_camel_to_snake():
         ), f"Expected {expected_output}, but got {result}"
 
 
-async def fetch_movie_data_by_imdb_id(session, url, parameters, headers, imdb_id):
-    # Mock response data for fetch_movie_data_by_imdb_id
-    movie_data = {
-        "Title": "Ultimate Fan's Guide to Walt Disney World",
-        "Year": "2004",
-        "Runtime": "56 min",
-        "imdbID": "tt1234567",
-    }
-    return movie_data
-
-
-async def fetch_movies_data(session, url, parameters, headers, limit):
-    # Mock response data for fetch_movies_data
-    return [
-        {"imdbID": "tt1234567", "Title": "Ultimate Fan's Guide to Walt Disney World"},
-    ]
-
-
 class session:
     def commit(self):
         return None
@@ -396,11 +378,24 @@ def test_fetch_and_save_movies_data():
     with patch(
         "data_fetcher.movie_data_fetcher.MovieDataFetcher.fetch_movie_data_by_imdb_id"
     ) as mock_fetch_movies_data_by_id:
-        mock_fetch_movies_data_by_id.side_effect = fetch_movie_data_by_imdb_id
+        movie_data = {
+            "Title": "Ultimate Fan's Guide to Walt Disney World",
+            "Year": "2004",
+            "Runtime": "56 min",
+            "imdbID": "tt1234567",
+        }
+        mock_fetch_movies_data_by_id.return_value = movie_data
         with patch(
             "data_fetcher.movie_data_fetcher.MovieDataFetcher.fetch_movies_data"
         ) as mock_fetch_movies_data:
-            mock_fetch_movies_data.side_effect = fetch_movies_data
+            movies_data = [
+                {
+                    "imdbID": "tt1234567",
+                    "Title": "Ultimate Fan's Guide to Walt Disney World",
+                }
+            ]
+
+            mock_fetch_movies_data.return_value = movies_data
             with patch(
                 "data_fetcher.movie_data_fetcher.MoviesRepository"
             ) as mock_movies_repo:
