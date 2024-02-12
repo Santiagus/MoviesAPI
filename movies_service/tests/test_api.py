@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from movies_service.app import app
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 
 @pytest.fixture(scope="module")
@@ -125,3 +125,19 @@ def test_get_movie_by_mismatching_title(test_app):
         assert response.json() == {
             "detail": 'No exact match for "title_to_search" in the database.'
         }
+
+
+def test_post_movie_by_title(test_app):
+    movies_titles = ["Title 1"]
+    # Mocking the fetch_and_save_movies_data method
+    test_app.app.state.mdf = AsyncMock()
+    test_app.app.state.mdf.fetch_and_save_movies_data.return_value = movies_titles
+
+    # Make the request to the endpoint
+    response = test_app.post("/movie/title_to_search")
+
+    # Assert that the response is successful
+    assert response.status_code == 200
+
+    # Assert that the response body contains the expected movies data
+    assert response.json() == {"Saved": movies_titles}
