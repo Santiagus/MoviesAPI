@@ -14,7 +14,6 @@ class UnitOfWork:
     def __exit__(self, exc_type, exc_val, traceback):
         if exc_type is not None:
             self.rollback()
-            self.session.close()
         self.session.close()
 
     def commit(self):
