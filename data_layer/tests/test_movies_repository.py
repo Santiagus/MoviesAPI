@@ -1,7 +1,9 @@
+from h11 import Data
 import pytest
 from unittest.mock import Mock, MagicMock
 from data_layer.models import MovieModel
 from data_layer.movies_repository import MoviesRepository
+from sqlalchemy.exc import OperationalError, DatabaseError
 
 
 @pytest.fixture
@@ -134,6 +136,40 @@ def test_is_database_empty_returns_true_when_empty(mock_session):
 
     # Create a repository instance with the mocked session
     movies_repo = MoviesRepository(mock_session)
+
+    # Call the is_database_empty method
+    is_empty = movies_repo.is_database_empty()
+
+    # Assert that the method returns True
+    assert is_empty is True
+
+
+def test_is_database_empty_table_not_exist(mock_session):
+    # Mocking the count method of the query to return zero records
+    mock_query = mock_session.query.return_value
+    mock_query.count.return_value = 0
+
+    # Create a repository instance with the mocked session
+    movies_repo = MoviesRepository(mock_session)
+    mock_query.count.side_effect = OperationalError(
+        statement="Mocked error", params={}, orig=BaseException()
+    )
+
+    # Call the is_database_empty method
+    is_empty = movies_repo.is_database_empty()
+
+    # Assert that the method returns True
+    assert is_empty is True
+
+
+def test_is_database_empty_database_error(mock_session):
+    # Mocking the count method of the query to return zero records
+    mock_query = mock_session.query.return_value
+    mock_query.count.return_value = 0
+
+    # Create a repository instance with the mocked session
+    movies_repo = MoviesRepository(mock_session)
+    mock_query.count.side_effect = Exception()
 
     # Call the is_database_empty method
     is_empty = movies_repo.is_database_empty()
