@@ -128,6 +128,33 @@ def test_get_movie_by_mismatching_title(test_app):
         }
 
 
+def test_get_movie_in_empty_database(test_app):
+    # Mocking the app.state.database_url
+    test_app.app.state = MagicMock()
+    test_app.app.state.database_url = "mocked_database_url"
+
+    # Mocking the UnitOfWork class
+    with patch("movies_service.api.api.UnitOfWork"), patch(
+        "movies_service.api.api.MoviesRepository"
+    ) as MockMoviesRepository:
+
+        # mock_unit_of_work_instance = MockUnitOfWork.return_value
+        mock_repo_instance = MockMoviesRepository.return_value
+
+        # Set up the return value of is_database_empty and get_all methods
+        mock_repo_instance.is_database_empty.return_value = True
+        # mock_repo_instance.get_by_title.return_value = dict()
+
+        # Make the request to the endpoint
+        response = test_app.get("/movie/title_to_search")
+
+        # Assert that the response is successful
+        assert response.status_code == 404
+
+        # Assert that the response body contains the expected movies data
+        assert response.json() == {"detail": "Movie not found in the database"}
+
+
 def test_post_movie_by_title(test_app):
     movies_titles = ["Title 1"]
     # Mocking the fetch_and_save_movies_data method
