@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import Mock, PropertyMock
+from unittest.mock import Mock, MagicMock
 from data_layer.models import MovieModel
 from data_layer.movies_repository import MoviesRepository
 
@@ -76,11 +76,10 @@ def test_delete_movie_by_id(mock_session):
     movies_repo = MoviesRepository(mock_session)
 
     # Call the delete_by_id method
-    success, message = movies_repo.delete_by_id("tt1375666")
+    success = movies_repo.delete_by_id("tt1375666")
 
     # Assert that the movie is deleted successfully
     assert success is True
-    assert message == "Movie deleted successfully"
 
 
 def test_get_all_movies(mock_session):
@@ -94,39 +93,34 @@ def test_get_all_movies(mock_session):
         {"imdbID": "tt0166222", "Title": "Inception"},
         {"imdbID": "tt6181728", "Title": "Interstellar"},
     ]
-
-    # Mock the all() method of the query object to return a list of movie instances
-    query_mock = Mock()
-    query_mock.all.return_value = [movie_instance_1, movie_instance_2]
-
-    # Mock the limit method of the query object to return the query mock
-    query_limit_mock = Mock()
-    query_limit_mock.limit.return_value = query_mock
-
-    # Mock the query method of the session to return the query limit mock
-    mock_session.query.return_value = query_limit_mock
+    # Set up the mock behavior for query, order_by, offset, limit, and all methods
+    mock_query = MagicMock()
+    mock_query.order_by.return_value = mock_query
+    mock_query.offset.return_value = mock_query
+    mock_query.limit.return_value = mock_query
+    mock_query.all.return_value = [movie_instance_1, movie_instance_2]
+    mock_session.query.return_value = mock_query
 
     # Create a repository instance with the mocked session
     movies_repo = MoviesRepository(mock_session)
 
     # Call the get_all method
-    movies = movies_repo.get_all(limit=5)
+    response = movies_repo.get_all(limit=5)
 
-    # Assert that the correct movies are returned
-    assert len(movies) == 2
-    assert movies[0]["imdbID"] == expected_data[0]["imdbID"]
-    assert movies[0]["Title"] == expected_data[0]["Title"]
-    assert movies[1]["imdbID"] == expected_data[1]["imdbID"]
-    assert movies[1]["Title"] == expected_data[1]["Title"]
+    assert len(response) == 2
+    assert response[0]["imdbID"] == expected_data[0]["imdbID"]
+    assert response[0]["Title"] == expected_data[0]["Title"]
+    assert response[1]["imdbID"] == expected_data[1]["imdbID"]
+    assert response[1]["Title"] == expected_data[1]["Title"]
 
     # Assert that the query method of the session is called once with the correct arguments
     mock_session.query.assert_called_once_with(MovieModel)
 
     # Assert that the limit method of the query object is called once with the correct arguments
-    query_limit_mock.limit.assert_called_once_with(5)
+    mock_query.limit.assert_called_once_with(5)
 
     # Assert that the all method of the query object is called once
-    query_mock.all.assert_called_once()
+    mock_query.all.assert_called_once()
 
 
 def test_is_database_empty_returns_true_when_empty(mock_session):
