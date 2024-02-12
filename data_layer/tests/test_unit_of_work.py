@@ -1,5 +1,6 @@
 import unittest
-from sqlalchemy import create_engine, inspect
+from unittest.mock import Mock
+from sqlalchemy import inspect
 from data_layer.unit_of_work import UnitOfWork
 from data_layer.models import MovieModel
 
@@ -57,6 +58,25 @@ class TestUnitOfWork(unittest.TestCase):
         self.uow.rollback()
         movie = self.session.query(MovieModel).filter_by(imdb_id="tt123456").first()
         self.assertIsNone(movie)
+
+    def test_exit_without_exception(self):
+        session_mock = Mock()
+        unit_of_work = UnitOfWork()
+        unit_of_work.session = session_mock
+
+        unit_of_work.__exit__(None, None, None)
+
+        session_mock.close.assert_called_once()
+
+    def test_exit_with_exception(self):
+        session_mock = Mock()
+        unit_of_work = UnitOfWork()
+        unit_of_work.session = session_mock
+
+        unit_of_work.__exit__(Exception, Exception("Test Exception"), None)
+
+        session_mock.rollback.assert_called_once()
+        session_mock.close.assert_called_once()
 
 
 if __name__ == "__main__":
