@@ -36,7 +36,7 @@ class MoviesRepository:
         if result:
             return result.to_dict()
         else:
-            dict()
+            return None
 
     def get_by_title(self, title):
         result = (
@@ -48,7 +48,7 @@ class MoviesRepository:
         if result:
             return result.to_dict()
         else:
-            dict()
+            return None
 
     def get_all(self, offset=0, limit=100):
         movies = (
