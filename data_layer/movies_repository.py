@@ -74,4 +74,4 @@ class MoviesRepository:
         except Exception as e:
             # Handle exceptions
             self.session.rollback()
-            return False, str(e)
+            return False
