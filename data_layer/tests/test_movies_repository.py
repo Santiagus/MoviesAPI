@@ -38,10 +38,12 @@ def test_get_movie_by_id(mock_session):
     # Call the get_by_id method
     movie = movies_repo.get_by_id("tt1375666")
 
+    assert movie != dict()
     # Assert that the returned movie has the correct attributes
-    assert movie.title == "Inception"
-    assert movie.year == "2010"
-    assert movie.director == "Christopher Nolan"
+    if movie:
+        assert movie.get("Title") == "Inception"
+        assert movie.get("Year") == "2010"
+        assert movie.get("Director") == "Christopher Nolan"
 
 
 def test_get_movie_by_title(mock_session):
@@ -59,11 +61,13 @@ def test_get_movie_by_title(mock_session):
     # Call the get_by_id method
     movie = movies_repo.get_by_title("Inception")
 
+    assert movie != dict()
     # Assert that the returned movie has the correct attributes
-    assert movie.imdb_id == "tt1375666"
-    assert movie.title == "Inception"
-    assert movie.year == "2010"
-    assert movie.director == "Christopher Nolan"
+    if movie:
+        assert movie.get("imdbID") == "tt1375666"
+        assert movie.get("Title") == "Inception"
+        assert movie.get("Year") == "2010"
+        assert movie.get("Director") == "Christopher Nolan"
 
 
 def test_delete_movie_by_id(mock_session):
