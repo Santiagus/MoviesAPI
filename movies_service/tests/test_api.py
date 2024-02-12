@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from movies_service.app import app
 from unittest.mock import AsyncMock, MagicMock, patch
+from starlette.exceptions import HTTPException
 
 
 @pytest.fixture(scope="module")
@@ -187,3 +188,20 @@ def test_delete_movie_by_imdb_id_with_valid_api_key(mock_api_verification, test_
         assert response.json() == {
             "message": f"Movie with ID imdb_to_search was deleted successfully"
         }
+
+
+@patch("movies_service.api.api.verify_api_key")
+def test_delete_movie_by_imdb_id_with_valid_api_key(mock_api_verification, test_app):
+    # Mocking api_verification raise exception
+    mock_api_verification.side_effect = HTTPException(
+        status_code=401, detail="Invalid API key"
+    )
+
+    # Make the request to the endpoint
+    response = test_app.delete("/movie/imdb_to_search")
+
+    # Assert that the response is successful
+    assert response.status_code == 401
+
+    # Assert that the response body contains the expected movies data
+    assert response.json() == {"detail": "Invalid API key"}
