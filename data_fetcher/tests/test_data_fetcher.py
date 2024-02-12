@@ -1,6 +1,9 @@
+from urllib import response
 import pytest
 import asyncio
 from unittest.mock import patch, AsyncMock, MagicMock
+
+from sqlalchemy import false
 from data_fetcher.movie_data_fetcher import MovieDataFetcher
 
 
@@ -144,6 +147,28 @@ async def test_fetch_movies_data_successful_request():
     assert len(movies_data) == 2
     assert movies_data[0]["Title"] == "Movie 1"
     assert movies_data[1]["Title"] == "Movie 2"
+
+
+@pytest.mark.asyncio
+async def test_fetch_movies_data_response_false():
+    # Define test data
+    url = "http://www.omdbapi.com/"
+    parameters = {"apikey": "test_api_key", "s": "test_query"}
+    headers = {"Accepts": "application/json"}
+    limit = 10
+
+    response_data = {"Response": "False"}
+    with patch(
+        "data_fetcher.movie_data_fetcher.MovieDataFetcher.fetch_page",
+        return_value=response_data,
+    ):
+        session_mock = MagicMock()
+
+        # Call the method under test
+        with pytest.raises(Exception):
+            await MovieDataFetcher.fetch_movies_data(
+                session_mock, url, parameters, headers, limit
+            )
 
 
 @pytest.mark.asyncio
