@@ -172,6 +172,28 @@ async def test_fetch_movies_data_response_false():
 
 
 @pytest.mark.asyncio
+async def test_fetch_movies_data_no_results():
+    # Define test data
+    url = "http://www.omdbapi.com/"
+    parameters = {"apikey": "test_api_key", "s": "test_query"}
+    headers = {"Accepts": "application/json"}
+    limit = 10
+
+    response_data = {"Response": "True", "totalResults": 0}
+    with patch(
+        "data_fetcher.movie_data_fetcher.MovieDataFetcher.fetch_page",
+        return_value=response_data,
+    ):
+        session_mock = MagicMock()
+
+        # Call the method under test
+        response = await MovieDataFetcher.fetch_movies_data(
+            session_mock, url, parameters, headers, limit
+        )
+        assert response == []
+
+
+@pytest.mark.asyncio
 async def test_fetch_movies_data_api_key_error():
     # Define test data
     url = "http://www.omdbapi.com/"
