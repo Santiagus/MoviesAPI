@@ -122,4 +122,6 @@ def test_get_movie_by_mismatching_title(test_app):
         assert response.status_code == 404
 
         # Assert that the response body contains the expected movies data
-        assert response.json() == {"detail": 'No exact match for "title_to_search" in the database.'}
+        assert response.json() == {
+            "detail": 'No exact match for "title_to_search" in the database.'
+        }
