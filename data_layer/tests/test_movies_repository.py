@@ -1,4 +1,5 @@
 from h11 import Data
+from httpx import delete
 import pytest
 from unittest.mock import Mock, MagicMock
 from data_layer.models import MovieModel
@@ -85,6 +86,19 @@ def test_get_movie_by_title(mock_session):
         assert movie.get("Director") == "Christopher Nolan"
 
 
+def test_get_movie_by_title_no_match(mock_session):
+    # Mocking the query method of the session
+    mock_session.query().filter().one_or_none.return_value = None
+
+    # Create a repository instance with the mocked session
+    movies_repo = MoviesRepository(mock_session)
+
+    # Call the get_by_id method
+    movie = movies_repo.get_by_title("no_match_title")
+
+    assert movie == None
+
+
 def test_delete_movie_by_id(mock_session):
     # Mocking the query method of the session
     mock_session.query().filter_by().first.return_value = MovieModel(
@@ -99,6 +113,37 @@ def test_delete_movie_by_id(mock_session):
 
     # Assert that the movie is deleted successfully
     assert success is True
+    mock_session.delete.assert_called_once()
+    mock_session.commit.assert_called_once()
+
+
+def test_delete_movie_by_id_no_match(mock_session):
+    # Mocking the query method of the session
+    mock_session.query().filter_by().first.return_value = None
+
+    # Create a repository instance with the mocked session
+    movies_repo = MoviesRepository(mock_session)
+
+    # Call the delete_by_id method
+    success = movies_repo.delete_by_id("tt1375666")
+
+    # Assert that the movie is deleted successfully
+    assert success is False
+
+
+def test_delete_movie_by_id_query_exception(mock_session):
+    # Mocking the query method of the session
+    mock_session.query().filter_by().first.side_effect = Exception()
+
+    # Create a repository instance with the mocked session
+    movies_repo = MoviesRepository(mock_session)
+
+    # Call the delete_by_id method
+    success = movies_repo.delete_by_id("tt1375666")
+
+    # Assert that the movie is deleted successfully
+    assert success is False
+    mock_session.rollback.assert_called_once()
 
 
 def test_get_all_movies(mock_session):
