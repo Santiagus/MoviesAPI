@@ -63,22 +63,6 @@ class MovieModel(Base):
     production = Column(String)
     website = Column(String)
 
-    def __repr__(self):
-        """
-        Return a string representation of the movie.
-
-        Returns:
-            str: A string containing selected attributes of the movie.
-        """
-        attributes = {
-            "Title": self.title,
-            "Year": self.year,
-            "imdbID": self.imdb_id,
-            "Type": self.type,
-            "Poster": self.poster,
-        }
-        return str(attributes)
-
     def to_dict(self):
         """
         Convert the movie attributes to a dictionary.
