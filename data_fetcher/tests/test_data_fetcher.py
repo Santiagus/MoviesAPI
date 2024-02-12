@@ -297,6 +297,37 @@ async def test_fetch_movie_data_by_imdb_id():
     mock_response.json.assert_awaited_once()
 
 
+@pytest.mark.asyncio
+async def test_fetch_movie_data_by_imdb_id_no_results_found():
+    # Define test data
+    url = "https://example.com"
+    parameters = {"i": "tt0362300", "page": 1}
+    headers = {"Accepts": "application/json"}
+    imdb_id = "tt0362300"
+
+    # Example response data
+    response_data = {}
+
+    # Create a response object with the required attributes
+    mock_response = AsyncMock()
+    mock_response.status = 404
+    mock_response.json.return_value = response_data
+
+    # Set the return_value of session.get to return the response object
+    session_mock = AsyncMock()
+    session_mock.get.return_value = mock_response
+
+    # Call the function under test
+    result = await MovieDataFetcher.fetch_movie_data_by_imdb_id(
+        session_mock, url, parameters, headers, imdb_id
+    )
+
+    # Assertions
+    assert result == response_data
+    session_mock.get.assert_awaited_once_with(url, headers=headers, params=parameters)
+    mock_response.json.assert_awaited_once()
+
+
 def test_camel_to_snake():
     # Test cases
     test_cases = [
