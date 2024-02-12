@@ -1,6 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from movies_service.app import app
+from movies_service.api import api
 from unittest.mock import AsyncMock, MagicMock, patch
 from starlette.exceptions import HTTPException
 
@@ -187,7 +188,7 @@ def test_post_movie_by_title_no_match(test_app):
     assert response.json() == {"Saved": movies_titles}
 
 
-@patch("movies_service.api.api.verify_api_key")
+@patch("movies_service.api.api.is_api_key_valid", return_value=True)
 def test_delete_movie_by_imdb_id_with_valid_api_key(mock_api_verification, test_app):
     # Mocking the app.state.database_url
     test_app.app.state = MagicMock()
@@ -217,7 +218,7 @@ def test_delete_movie_by_imdb_id_with_valid_api_key(mock_api_verification, test_
         }
 
 
-@patch("movies_service.api.api.verify_api_key")
+@patch("movies_service.api.api.is_api_key_valid", return_value=True)
 def test_delete_movie_not_in_database_imdb_id_with_valid_api_key(
     mock_api_verification, test_app
 ):
@@ -247,13 +248,8 @@ def test_delete_movie_not_in_database_imdb_id_with_valid_api_key(
         assert response.json() == {"detail": f"Movie not found in the database"}
 
 
-@patch("movies_service.api.api.verify_api_key")
+@patch("movies_service.api.api.is_api_key_valid", return_value=False)
 def test_delete_movie_by_imdb_id_with_invalid_api_key(mock_api_verification, test_app):
-    # Mocking api_verification raise exception
-    mock_api_verification.side_effect = HTTPException(
-        status_code=401, detail="Invalid API key"
-    )
-
     # Make the request to the endpoint
     response = test_app.delete("/movie/imdb_to_search")
 
@@ -262,3 +258,15 @@ def test_delete_movie_by_imdb_id_with_invalid_api_key(mock_api_verification, tes
 
     # Assert that the response body contains the expected movies data
     assert response.json() == {"detail": "Invalid API key"}
+
+
+def test_is_api_key_valid():
+    # Valid API key
+    response = api.is_api_key_valid("Movies_API_KEY_number_1")
+    assert response == True
+
+
+def test_is_api_key_invalid():
+    # Invalid API key
+    response = api.is_api_key_valid("Invalid_API_key")
+    assert response == False
