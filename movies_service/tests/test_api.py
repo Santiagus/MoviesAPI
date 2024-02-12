@@ -157,3 +157,33 @@ def test_post_movie_by_title_no_match(test_app):
 
     # Assert that the response body contains the expected movies data
     assert response.json() == {"Saved": movies_titles}
+
+
+@patch("movies_service.api.api.verify_api_key")
+def test_delete_movie_by_imdb_id_with_valid_api_key(mock_api_verification, test_app):
+    # Mocking the app.state.database_url
+    test_app.app.state = MagicMock()
+    test_app.app.state.database_url = "mocked_database_url"
+
+    # Mocking the UnitOfWork class
+    with patch("movies_service.api.api.UnitOfWork"), patch(
+        "movies_service.api.api.MoviesRepository"
+    ) as MockMoviesRepository:
+
+        # mock_unit_of_work_instance = MockUnitOfWork.return_value
+        mock_repo_instance = MockMoviesRepository.return_value
+
+        # Set up the return value of is_database_empty and get_all methods
+        mock_repo_instance.is_database_empty.return_value = False
+        mock_repo_instance.delete_by_id.return_value = True
+
+        # Make the request to the endpoint
+        response = test_app.delete("/movie/imdb_to_search")
+
+        # Assert that the response is successful
+        assert response.status_code == 200
+
+        # Assert that the response body contains the expected movies data
+        assert response.json() == {
+            "message": f"Movie with ID imdb_to_search was deleted successfully"
+        }
