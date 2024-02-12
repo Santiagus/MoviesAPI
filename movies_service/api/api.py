@@ -1,5 +1,6 @@
 import logging
 from fastapi import HTTPException, Query, Depends, status, Header
+from sqlalchemy import false
 from data_layer.unit_of_work import UnitOfWork
 from movies_service.app import app
 from data_layer.movies_repository import MoviesRepository
@@ -86,10 +87,9 @@ async def add_movie(title: str):
 api_keys = {"Movies_API_KEY_number_1"}
 
 
-def verify_api_key(api_key: str = Header(None)):
+def is_api_key_valid(api_key: str = Header(None)):
     """Dependency function to verify the API key."""
-    if api_key not in api_keys:
-        raise HTTPException(status_code=401, detail="Invalid API key")
+    return api_key in api_keys
 
 
 # Define the API key security scheme
@@ -98,7 +98,8 @@ APIKeyAuth = APIKeyHeader(name="Authorization", auto_error=False)
 
 @app.delete("/movie/{imdb_id}")
 async def delete_movie(imdb_id: str, api_key: str = Depends(APIKeyAuth)):
-    verify_api_key(api_key)
+    if not is_api_key_valid(api_key):
+        raise HTTPException(status_code=401, detail="Invalid API key")
 
     with UnitOfWork(app.state.database_url) as unit_of_work:
         repo = MoviesRepository(unit_of_work.session)
