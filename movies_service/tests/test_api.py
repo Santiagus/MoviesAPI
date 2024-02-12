@@ -191,7 +191,7 @@ def test_delete_movie_by_imdb_id_with_valid_api_key(mock_api_verification, test_
 
 
 @patch("movies_service.api.api.verify_api_key")
-def test_delete_movie_by_imdb_id_with_valid_api_key(mock_api_verification, test_app):
+def test_delete_movie_by_imdb_id_with_invalid_api_key(mock_api_verification, test_app):
     # Mocking api_verification raise exception
     mock_api_verification.side_effect = HTTPException(
         status_code=401, detail="Invalid API key"
