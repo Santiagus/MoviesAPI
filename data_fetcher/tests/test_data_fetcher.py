@@ -150,6 +150,47 @@ async def test_fetch_movies_data_successful_request():
 
 
 @pytest.mark.asyncio
+async def test_fetch_movies_data_successful_multi_request():
+    # Define test data
+    url = "http://www.omdbapi.com/"
+    parameters = {"apikey": "test_api_key", "s": "test_query"}
+    headers = {"Accepts": "application/json"}
+    limit = 20
+
+    # Set up mock response data
+    response_data = {
+        "Search": [
+            {"Title": "Movie 1", "Year": "2000"},
+            {"Title": "Movie 2", "Year": "2001"},
+        ],
+        "totalResults": "15",
+        "Response": "True",
+    }
+
+    # Create a response object with the required attributes
+    mock_response = AsyncMock()
+    mock_response.status = 200
+    mock_response.json.return_value = response_data
+
+    # Set the return_value of session.get to return the response object
+    session_mock = AsyncMock()
+    session_mock.get.return_value = mock_response
+
+    # Call the method under test
+    movies_data = await MovieDataFetcher.fetch_movies_data(
+        session_mock, url, parameters, headers, limit
+    )
+
+    # Assertions
+    assert movies_data != None
+    assert len(movies_data) == 4
+    assert movies_data[0]["Title"] == "Movie 1"
+    assert movies_data[1]["Title"] == "Movie 2"
+    assert movies_data[2]["Title"] == "Movie 1"
+    assert movies_data[3]["Title"] == "Movie 2"
+
+
+@pytest.mark.asyncio
 async def test_fetch_movies_data_response_false():
     # Define test data
     url = "http://www.omdbapi.com/"
