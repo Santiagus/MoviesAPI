@@ -1,44 +1,11 @@
 import logging
-from fastapi import HTTPException, Query, Depends, status, Header
+import json
+from fastapi import HTTPException, Query, Depends, status, Header, Response, status
 from sqlalchemy import false
 from data_layer.unit_of_work import UnitOfWork
 from movies_service.app import app
 from data_layer.movies_repository import MoviesRepository
 from fastapi.security.api_key import APIKeyHeader
-
-# Static movies info  for testing purpose
-movies_data = [
-    {
-        "Title": "Ultimate Fan's Guide to Walt Disney World",
-        "Year": "2004",
-        "Runtime": "56 min",
-        "Type": "movie",
-    },
-    {
-        "Title": "The Shawshank Redemption",
-        "Year": "1994",
-        "Runtime": "142 min",
-        "Type": "movie",
-    },
-    {
-        "Title": "The Godfather",
-        "Year": "1972",
-        "Runtime": "175 min",
-        "Type": "movie",
-    },
-    {
-        "Title": "The Dark Knight",
-        "Year": "2008",
-        "Runtime": "152 min",
-        "Type": "movie",
-    },
-    {
-        "Title": "Pulp Fiction",
-        "Year": "1994",
-        "Runtime": "154 min",
-        "Type": "movie",
-    },
-]
 
 
 @app.get("/movies")
@@ -79,8 +46,37 @@ async def get_movie(title: str):
 
 @app.post("/movie/{title}")
 async def add_movie(title: str):
-    result = await app.state.mdf.fetch_and_save_movies_data(title, limit=1)
-    return {"Saved": result}
+    try:
+        result = await app.state.mdf.fetch_and_save_movies_data(title, limit=1)
+        if result is None:
+            return Response(
+                content=json.dumps({"detail": f"No match found for {title}"}),
+                status_code=status.HTTP_404_NOT_FOUND,
+                media_type="application/json",
+            )
+        # Saved first matching title movie
+        if result[0] is not None:
+            return Response(
+                content=json.dumps({"detail": f"Saved {result}"}),
+                status_code=status.HTTP_201_CREATED,
+                media_type="application/json",
+            )
+        # Fist movie title coincidende is already in the database
+        else:
+            return Response(
+                content=json.dumps(
+                    {"detail": f"{title} already exists in the database"}
+                ),
+                status_code=status.HTTP_200_OK,
+                media_type="application/json",
+            )
+    except Exception as e:
+        # Handle exceptions raised during fetch_and_save_movies_data
+        return Response(
+            content=json.dumps({"detail": f"An error occurred: {e}"}),
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            media_type="application/json",
+        )
 
 
 # Dummy database of API keys
