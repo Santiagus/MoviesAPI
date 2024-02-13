@@ -56,6 +56,7 @@ async def lifespan(app: FastAPI):
 
     except Exception as e:
         logging.error(f"An unexpected error occurred during startup: {e}")
+        raise Exception(e)
     finally:
         yield
         # Shutdown (Close connections to db, ...)
