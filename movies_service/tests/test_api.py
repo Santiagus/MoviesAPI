@@ -296,3 +296,24 @@ def test_is_api_key_invalid():
     # Invalid API key
     response = api.is_api_key_valid("Invalid_API_key")
     assert response == False
+
+
+def test_post_movie_by_title_no_valid_api_key(test_app):
+    title_to_search = "sample_title"
+    exception_message = "Non valid API_KEY"
+    expected_response = {"detail": f"An error occurred: {exception_message}"}
+
+    # Mocking the fetch_and_save_movies_data method
+    test_app.app.state.mdf = AsyncMock()
+    test_app.app.state.mdf.fetch_and_save_movies_data.side_effect = Exception(
+        exception_message
+    )
+
+    # Make the request to the endpoint
+    response = test_app.post(f"/movie/{title_to_search}")
+
+    # Assert that the response is successful
+    assert response.status_code == 500
+
+    # Assert that the response body contains the expected movies data
+    assert response.json() == expected_response
