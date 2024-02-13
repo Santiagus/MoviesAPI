@@ -86,12 +86,26 @@ paths:
           description: Movie added successfully
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/MovieModel'
-        '422':
-          description: Unprocessable entity (e.g., invalid data)
+              example:
+                detail: Saved ['movie_title']
+        '200':
+          description: Movie already exists
+          content:
+            application/json:
+              example:
+                detail: Title already exists into the database
+        '404':
+          description: No match found
+          content:
+            application/json:
+              example:
+                detail: No match found
         '500':
           description: Internal server error
+          content:
+            application/json:
+              example:
+                detail: Internal server error occurred
   /movie/{imdb_id}:
     delete:
       summary: Delete movie by IMDb ID
