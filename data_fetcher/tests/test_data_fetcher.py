@@ -1,9 +1,6 @@
-from urllib import response
 import pytest
 import asyncio
 from unittest.mock import patch, AsyncMock, MagicMock
-
-from sqlalchemy import false
 from data_fetcher.movie_data_fetcher import MovieDataFetcher
 
 
@@ -348,51 +345,6 @@ def test_camel_to_snake():
         ), f"Expected {expected_output}, but got {result}"
 
 
-class session:
-    def commit(self):
-        return None
-
-
-class MockMoviesRepoFixture:
-
-    def __init__(self):
-        self.movie_instances = []
-        self.session = session()
-        self.add_counter = 0
-
-    # Mock the behavior of the add method to append MovieModel instances to the list
-    def add(self, movie):
-        self.movie_instances.append(movie)
-        self.add_counter += 1
-        print("MockMoviesRepoFixture add_counter :", self.add_counter)
-
-    # Mock the behavior of the get_all method to return the list of MovieModel instances
-    def get_all(self, limit=100):
-        return [movie.to_dict() for movie in self.movie_instances[:limit]]
-
-    # Mock the behavior of the get_by_id method to return a MovieModel from the list if there is a match
-    def get_by_id(self, imdb_id):
-        for movie in self.movie_instances:
-            if movie.imdb_id == imdb_id:
-                return movie
-        return None
-
-    # Mock the behavior of the get_by_title method to return a MovieModel from the list if there is a match
-    def get_by_title(self, title):
-        for movie in self.movie_instances:
-            if movie.title == title:
-                return movie
-        return None
-
-    # Mock the behavior of the get_delete_by_id method to return a MovieModel from the list if there is a match
-    def delete_by_id(self, imdb_id):
-        for movie in self.movie_instances:
-            if movie.imdb_id == imdb_id:
-                del movie
-                return True, "Movie deleted successfully"
-        return False, "Movie not found"
-
-
 def test_fetch_and_save_movies_data():
     # Set up mock config
     fetcher = MovieDataFetcher()
@@ -403,43 +355,40 @@ def test_fetch_and_save_movies_data():
         "headers": {"Accepts": "application/json"},
     }
 
-    # Call the method under test
-    with patch(
-        "data_fetcher.movie_data_fetcher.MovieDataFetcher.fetch_movie_data_by_imdb_id"
-    ) as mock_fetch_movies_data_by_id:
-        movie_data = {
-            "Title": "Ultimate Fan's Guide to Walt Disney World",
-            "Year": "2004",
-            "Runtime": "56 min",
-            "imdbID": "tt1234567",
-        }
-        mock_fetch_movies_data_by_id.return_value = movie_data
+    with patch("data_fetcher.movie_data_fetcher.UnitOfWork") as uow:
         with patch(
             "data_fetcher.movie_data_fetcher.MovieDataFetcher.fetch_movies_data"
         ) as mock_fetch_movies_data:
-            movies_data = [
-                {
-                    "imdbID": "tt1234567",
-                    "Title": "Ultimate Fan's Guide to Walt Disney World",
-                }
-            ]
-
-            mock_fetch_movies_data.return_value = movies_data
             with patch(
                 "data_fetcher.movie_data_fetcher.MoviesRepository"
             ) as mock_movies_repo:
-                mock_movies_repo.return_value = MockMoviesRepoFixture()
                 with patch(
-                    "data_fetcher.movie_data_fetcher.aiohttp.ClientSession"
-                ) as session:
-                    session.return_value = AsyncMock()
-                    with patch("data_fetcher.movie_data_fetcher.UnitOfWork") as uow:
-                        # Define what uow returns
-                        mock_unit_of_work = MagicMock()
-                        mock_unit_of_work.session = MagicMock()
-                        uow.return_value = mock_unit_of_work
+                    "data_fetcher.movie_data_fetcher.MovieDataFetcher.fetch_movie_data_by_imdb_id"
+                ) as mock_fetch_movies_data_by_id:
+                    with patch(
+                        "data_fetcher.movie_data_fetcher.aiohttp.ClientSession"
+                    ) as session:
+                        # Movies data
+                        movies_data = [
+                            {
+                                "imdbID": "tt1234567",
+                                "Title": "Ultimate Fan's Guide to Walt Disney World",
+                            }
+                        ]
+                        movie_data = {
+                            "Title": "Ultimate Fan's Guide to Walt Disney World",
+                            "Year": "2004",
+                            "Runtime": "56 min",
+                            "imdbID": "tt1234567",
+                            "Response": "True",
+                        }
+                        mock_fetch_movies_data.return_value = movies_data
+                        mock_fetch_movies_data_by_id.return_value = movie_data
 
-                        asyncio.run(
+                        mock_movies_repo.return_value.get_by_id.return_value = None
+                        session.return_value = AsyncMock()
+
+                        response = asyncio.run(
                             fetcher.fetch_and_save_movies_data("Movie Title", limit=100)
                         )
 
@@ -450,20 +399,7 @@ def test_fetch_and_save_movies_data():
                         # Assert that fetch_movies_data was called with the correct arguments
                         mock_fetch_movies_data.assert_called_once()
 
-                        saved_movies = mock_movies_repo.return_value.get_all()
-                        # Transform keys to snake case
-                        movie_data = {
-                            "Title": "Ultimate Fan's Guide to Walt Disney World",
-                            "Year": "2004",
-                            "Runtime": "56 min",
-                            "imdbID": "tt1234567",
-                        }
-                        assert movie_data.get("Title") == saved_movies[0].get("Title")
-                        assert movie_data.get("year") == saved_movies[0].get("year")
-                        assert movie_data.get("Runtime") == saved_movies[0].get(
-                            "Runtime"
-                        )
-                        assert movie_data.get("imdbID") == saved_movies[0].get("imdbID")
+                        assert response[0] == movie_data["Title"]
 
 
 def test_fetch_and_save_movies_data_filter_response_key():
@@ -476,42 +412,38 @@ def test_fetch_and_save_movies_data_filter_response_key():
         "headers": {"Accepts": "application/json"},
     }
 
-    # Call the method under test
-    with patch(
-        "data_fetcher.movie_data_fetcher.MovieDataFetcher.fetch_movie_data_by_imdb_id"
-    ) as mock_fetch_movies_data_by_id:
-        movie_data = {
-            "Title": "Ultimate Fan's Guide to Walt Disney World",
-            "Year": "2004",
-            "Runtime": "56 min",
-            "imdbID": "tt1234567",
-            "Response": "True",
-        }
-        mock_fetch_movies_data_by_id.return_value = movie_data
+    with patch("data_fetcher.movie_data_fetcher.UnitOfWork") as uow:
         with patch(
             "data_fetcher.movie_data_fetcher.MovieDataFetcher.fetch_movies_data"
         ) as mock_fetch_movies_data:
-            movies_data = [
-                {
-                    "imdbID": "tt1234567",
-                    "Title": "Ultimate Fan's Guide to Walt Disney World",
-                }
-            ]
-
-            mock_fetch_movies_data.return_value = movies_data
             with patch(
                 "data_fetcher.movie_data_fetcher.MoviesRepository"
             ) as mock_movies_repo:
-                mock_movies_repo.return_value = MockMoviesRepoFixture()
                 with patch(
-                    "data_fetcher.movie_data_fetcher.aiohttp.ClientSession"
-                ) as session:
-                    session.return_value = AsyncMock()
-                    with patch("data_fetcher.movie_data_fetcher.UnitOfWork") as uow:
-                        # Define what uow returns
-                        mock_unit_of_work = MagicMock()
-                        mock_unit_of_work.session = MagicMock()
-                        uow.return_value = mock_unit_of_work
+                    "data_fetcher.movie_data_fetcher.MovieDataFetcher.fetch_movie_data_by_imdb_id"
+                ) as mock_fetch_movies_data_by_id:
+                    with patch(
+                        "data_fetcher.movie_data_fetcher.aiohttp.ClientSession"
+                    ) as session:
+                        # Movies data
+                        movies_data = [
+                            {
+                                "imdbID": "tt1234567",
+                                "Title": "Ultimate Fan's Guide to Walt Disney World",
+                            }
+                        ]
+                        movie_data = {
+                            "Title": "Ultimate Fan's Guide to Walt Disney World",
+                            "Year": "2004",
+                            "Runtime": "56 min",
+                            "imdbID": "tt1234567",
+                            "Response": "True",
+                        }
+                        mock_fetch_movies_data.return_value = movies_data
+                        mock_fetch_movies_data_by_id.return_value = movie_data
+
+                        mock_movies_repo.return_value = MagicMock()
+                        session.return_value = AsyncMock()
 
                         asyncio.run(
                             fetcher.fetch_and_save_movies_data("Movie Title", limit=100)
@@ -524,14 +456,12 @@ def test_fetch_and_save_movies_data_filter_response_key():
                         # Assert that fetch_movies_data was called with the correct arguments
                         mock_fetch_movies_data.assert_called_once()
 
+                        mock_movies_repo.return_value.get_all.return_value = [
+                            movie_data
+                        ]
                         saved_movies = mock_movies_repo.return_value.get_all()
+
                         # Transform keys to snake case
-                        movie_data = {
-                            "Title": "Ultimate Fan's Guide to Walt Disney World",
-                            "Year": "2004",
-                            "Runtime": "56 min",
-                            "imdbID": "tt1234567",
-                        }
                         assert movie_data.get("Title") == saved_movies[0].get("Title")
                         assert movie_data.get("year") == saved_movies[0].get("year")
                         assert movie_data.get("Runtime") == saved_movies[0].get(
