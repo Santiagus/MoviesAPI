@@ -84,6 +84,8 @@ class MovieDataFetcher:
         if response.get("Response") == "True":
             total_results = int(response.get("totalResults", 0))
         else:
+            if response.get("Error") == "Movie not found!":
+                return None
             raise Exception(response.get("Error"))
 
         # Check data in response
