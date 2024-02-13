@@ -1,4 +1,5 @@
 import pytest
+import json
 from fastapi.testclient import TestClient
 from movies_service.app import app
 from movies_service.api import api
@@ -157,35 +158,60 @@ def test_get_movie_in_empty_database(test_app):
 
 
 def test_post_movie_by_title(test_app):
-    movies_titles = ["Title 1"]
+    title_to_search = "sample_title"
+    return_value = [title_to_search]
+    expected_response = {"detail": f"Saved {return_value}"}
+
     # Mocking the fetch_and_save_movies_data method
     test_app.app.state.mdf = AsyncMock()
-    test_app.app.state.mdf.fetch_and_save_movies_data.return_value = movies_titles
+    test_app.app.state.mdf.fetch_and_save_movies_data.return_value = return_value
 
     # Make the request to the endpoint
-    response = test_app.post("/movie/title_to_search")
+    response = test_app.post(f"/movie/{title_to_search}")
+
+    # Assert that the response is successful
+    assert response.status_code == 201
+
+    # Assert that the response body contains the expected movies data
+    assert response.json() == expected_response
+
+
+def test_post_movie_by_title_already_exists(test_app):
+    title_to_search = "sample_title"
+    return_value = [None]
+    expected_response = {"detail": f"{title_to_search} already exists in the database"}
+
+    # Mocking the fetch_and_save_movies_data method
+    test_app.app.state.mdf = AsyncMock()
+    test_app.app.state.mdf.fetch_and_save_movies_data.return_value = return_value
+
+    # Make the request to the endpoint
+    response = test_app.post(f"/movie/{title_to_search}")
 
     # Assert that the response is successful
     assert response.status_code == 200
 
     # Assert that the response body contains the expected movies data
-    assert response.json() == {"Saved": movies_titles}
+    assert response.json() == expected_response
 
 
 def test_post_movie_by_title_no_match(test_app):
-    movies_titles = []
+    title_to_search = "sample_title"
+    return_value = None
+    expected_response = {"detail": f"No match found for {title_to_search}"}
+
     # Mocking the fetch_and_save_movies_data method
     test_app.app.state.mdf = AsyncMock()
-    test_app.app.state.mdf.fetch_and_save_movies_data.return_value = movies_titles
+    test_app.app.state.mdf.fetch_and_save_movies_data.return_value = return_value
 
     # Make the request to the endpoint
-    response = test_app.post("/movie/title_to_search")
+    response = test_app.post(f"/movie/{title_to_search}")
 
     # Assert that the response is successful
-    assert response.status_code == 200
+    assert response.status_code == 404
 
     # Assert that the response body contains the expected movies data
-    assert response.json() == {"Saved": movies_titles}
+    assert response.json() == expected_response
 
 
 @patch("movies_service.api.api.is_api_key_valid", return_value=True)
