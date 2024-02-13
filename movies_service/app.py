@@ -47,7 +47,7 @@ async def lifespan(app: FastAPI):
         app.state.database_url = utils.get_database_url_from_alembic_config()
 
         FastAPICache.init(
-            backend=InMemoryBackend(), prefix="fastapi-cache", enable=False
+            backend=InMemoryBackend(), prefix="fastapi-cache", enable=True
         )
 
         # Database initilization
