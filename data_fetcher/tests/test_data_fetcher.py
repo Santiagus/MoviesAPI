@@ -232,6 +232,31 @@ async def test_fetch_movies_data_no_results():
 
 
 @pytest.mark.asyncio
+async def test_fetch_movies_data_movie_not_found():
+    # Define test data
+    url = "http://www.omdbapi.com/"
+    parameters = {"apikey": "test_api_key", "s": "test_query"}
+    headers = {"Accepts": "application/json"}
+    limit = 10
+
+    # Set up mock response data with error
+    response_data = {"Response": "False", "Error": "Movie not found!"}
+    with patch(
+        "data_fetcher.movie_data_fetcher.MovieDataFetcher.fetch_page",
+        return_value=response_data,
+    ):
+        session_mock = MagicMock()
+
+        # Call the method under test and expect an exception
+        result = await MovieDataFetcher.fetch_movies_data(
+            session_mock, url, parameters, headers, limit
+        )
+
+        # Assertion
+        assert result == None
+
+
+@pytest.mark.asyncio
 async def test_fetch_movies_data_api_key_error():
     # Define test data
     url = "http://www.omdbapi.com/"
