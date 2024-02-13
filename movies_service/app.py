@@ -2,12 +2,15 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 import logging
 import logging.config
+from sqlalchemy import false
 import yaml
 
 from common import utils
 from data_fetcher.movie_data_fetcher import MovieDataFetcher
 from data_layer.unit_of_work import UnitOfWork
 from data_layer.movies_repository import MoviesRepository
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
 
 
 @asynccontextmanager
@@ -42,6 +45,10 @@ async def lifespan(app: FastAPI):
         logging.info(f"Service start. Loading configuration...")
 
         app.state.database_url = utils.get_database_url_from_alembic_config()
+
+        FastAPICache.init(
+            backend=InMemoryBackend(), prefix="fastapi-cache", enable=False
+        )
 
         # Database initilization
         with UnitOfWork(app.state.database_url) as unit_of_work:

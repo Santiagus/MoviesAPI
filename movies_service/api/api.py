@@ -6,9 +6,11 @@ from data_layer.unit_of_work import UnitOfWork
 from movies_service.app import app
 from data_layer.movies_repository import MoviesRepository
 from fastapi.security.api_key import APIKeyHeader
+from fastapi_cache.decorator import cache
 
 
 @app.get("/movies")
+@cache(expire=60)
 async def get_all_movies(
     limit: int = Query(10, title="The number of movies to retrieve", ge=1),
     page: int = Query(1, title="Results page", ge=1),
@@ -26,6 +28,7 @@ async def get_all_movies(
 
 
 @app.get("/movie/{title}")
+@cache(expire=60)
 async def get_movie(title: str):
     with UnitOfWork(app.state.database_url) as unit_of_work:
         repo = MoviesRepository(unit_of_work.session)
