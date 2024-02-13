@@ -1,10 +1,15 @@
 import pytest
-import json
 from fastapi.testclient import TestClient
 from movies_service.app import app
 from movies_service.api import api
 from unittest.mock import AsyncMock, MagicMock, patch
-from starlette.exceptions import HTTPException
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
+
+
+# Cache initialization
+# NOTE: DISABLE IT FOR TESTING!!!
+FastAPICache.init(backend=InMemoryBackend(), prefix="fastapi-cache", enable=False)
 
 
 @pytest.fixture(scope="module")
