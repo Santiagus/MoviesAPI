@@ -254,7 +254,7 @@ async def test_fetch_movies_data_api_key_error():
             )
 
         # Assertion
-        assert str(exc_info.value) == "Error: Invalid API key!"
+        assert str(exc_info.value) == "Invalid API key!"
 
 
 @pytest.mark.asyncio
