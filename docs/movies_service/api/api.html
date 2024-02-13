@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>movies_service.api.api API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>movies_service.api.api</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import logging
+import json
+from fastapi import HTTPException, Query, Depends, status, Header, Response, status
+from data_layer.unit_of_work import UnitOfWork
+from movies_service.app import app
+from data_layer.movies_repository import MoviesRepository
+from fastapi.security.api_key import APIKeyHeader
+from fastapi_cache.decorator import cache
+
+
+@app.get(&#34;/movies&#34;)
+@cache(expire=60)
+async def get_all_movies(
+    limit: int = Query(10, title=&#34;The number of movies to retrieve&#34;, ge=1),
+    page: int = Query(1, title=&#34;Results page&#34;, ge=1),
+):
+    &#34;&#34;&#34;
+    Retrieve a list of movies.
+
+    Parameters:
+    - `limit` (int): The number of movies to retrieve. Defaults to 10. Must be greater than or equal to 1.
+    - `page` (int): The results page to retrieve. Defaults to 1. Must be greater than or equal to 1.
+
+    Returns:
+    - List[Movie]: A list of movies retrieved based on the specified limit and page.
+
+    Cache:
+    - This endpoint is cached for 60 seconds.
+    &#34;&#34;&#34;
+    with UnitOfWork(app.state.database_url) as unit_of_work:
+        repo = MoviesRepository(unit_of_work.session)
+        if not repo.is_database_empty():
+            offset = (page - 1) * limit
+            return repo.get_all(offset, limit)
+        else:
+            logging.warning(&#34;Movies not found in the database&#34;)
+            raise HTTPException(
+                status_code=404, detail=&#34;Movies not found in the database&#34;
+            )
+
+
+@app.get(&#34;/movie/{title}&#34;)
+@cache(expire=60)
+async def get_movie(title: str):
+    &#34;&#34;&#34;
+    Retrieve information about a specific movie.
+
+    Parameters:
+    - `title` (str): The title of the movie to retrieve.
+
+    Returns:
+    - Movie: Information about the specified movie.
+
+    Cache:
+    - This endpoint is cached for 60 seconds.
+    &#34;&#34;&#34;
+    with UnitOfWork(app.state.database_url) as unit_of_work:
+        repo = MoviesRepository(unit_of_work.session)
+        if not repo.is_database_empty():
+            movie = repo.get_by_title(title)
+            if not movie:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f&#39;No exact match for &#34;{title}&#34; in the database.&#39;,
+                )
+            return movie
+        else:
+            logging.warning(&#34;Movie not found in the database&#34;)
+            raise HTTPException(
+                status_code=404, detail=&#34;Movie not found in the database&#34;
+            )
+
+
+@app.post(&#34;/movie/{title}&#34;)
+async def add_movie(title: str):
+    &#34;&#34;&#34;
+    Add a new movie to the database based on the provided title.
+
+    Parameters:
+    - `title` (str): The title of the movie to add.
+
+    Returns:
+    - dict: A message indicating whether the movie was successfully added.
+
+    Example:
+        {&#34;detail&#34;: &#34;Movie added successfully&#34;}
+
+    &#34;&#34;&#34;
+    try:
+        result = await app.state.mdf.fetch_and_save_movies_data(title, limit=1)
+        if result is None:
+            return Response(
+                content=json.dumps({&#34;detail&#34;: f&#34;No match found for {title}&#34;}),
+                status_code=status.HTTP_404_NOT_FOUND,
+                media_type=&#34;application/json&#34;,
+            )
+        # Saved first matching title movie
+        if result[0] is not None:
+            return Response(
+                content=json.dumps({&#34;detail&#34;: f&#34;Saved {result}&#34;}),
+                status_code=status.HTTP_201_CREATED,
+                media_type=&#34;application/json&#34;,
+            )
+        # Fist movie title coincidende is already in the database
+        else:
+            return Response(
+                content=json.dumps(
+                    {&#34;detail&#34;: f&#34;{title} already exists in the database&#34;}
+                ),
+                status_code=status.HTTP_200_OK,
+                media_type=&#34;application/json&#34;,
+            )
+    except Exception as e:
+        # Handle exceptions raised during fetch_and_save_movies_data
+        return Response(
+            content=json.dumps({&#34;detail&#34;: f&#34;An error occurred: {e}&#34;}),
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            media_type=&#34;application/json&#34;,
+        )
+
+
+# Dummy database of API keys
+api_keys = {&#34;Movies_API_KEY_number_1&#34;}
+
+
+def is_api_key_valid(api_key: str = Header(None)):
+    &#34;&#34;&#34;Dependency function to verify the API key.&#34;&#34;&#34;
+    return api_key in api_keys
+
+
+# Define the API key security scheme
+APIKeyAuth = APIKeyHeader(name=&#34;Authorization&#34;, auto_error=False)
+
+
+@app.delete(&#34;/movie/{imdb_id}&#34;)
+async def delete_movie(imdb_id: str, api_key: str = Depends(APIKeyAuth)):
+    &#34;&#34;&#34;
+    Delete a movie from the database based on the provided IMDb ID.
+
+    Parameters:
+    - `imdb_id` (str): The IMDb ID of the movie to delete.
+    - `api_key` (str, optional): API key for authentication (if required).
+
+    Returns:
+    - dict: A message indicating whether the movie was successfully deleted or not.
+
+    Raises:
+    - HTTPException: If an error occurs during the deletion process, or if the API key is invalid.
+
+    &#34;&#34;&#34;
+    if not is_api_key_valid(api_key):
+        raise HTTPException(status_code=401, detail=&#34;Invalid API key&#34;)
+
+    with UnitOfWork(app.state.database_url) as unit_of_work:
+        repo = MoviesRepository(unit_of_work.session)
+        result = repo.delete_by_id(imdb_id)
+        if result:
+            return {&#34;detail&#34;: f&#34;Movie with ID {imdb_id} was deleted successfully&#34;}
+        logging.warning(&#34;Movie not found in the database&#34;)
+        raise HTTPException(status_code=404, detail=&#34;Movie not found in the database&#34;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="movies_service.api.api.add_movie"><code class="name flex">
+<span>async def <span class="ident">add_movie</span></span>(<span>title: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add a new movie to the database based on the provided title.</p>
+<p>Parameters:
+- <code>title</code> (str): The title of the movie to add.</p>
+<p>Returns:
+- dict: A message indicating whether the movie was successfully added.</p>
+<h2 id="example">Example</h2>
+<p>{"detail": "Movie added successfully"}</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/movie/{title}&#34;)
+async def add_movie(title: str):
+    &#34;&#34;&#34;
+    Add a new movie to the database based on the provided title.
+
+    Parameters:
+    - `title` (str): The title of the movie to add.
+
+    Returns:
+    - dict: A message indicating whether the movie was successfully added.
+
+    Example:
+        {&#34;detail&#34;: &#34;Movie added successfully&#34;}
+
+    &#34;&#34;&#34;
+    try:
+        result = await app.state.mdf.fetch_and_save_movies_data(title, limit=1)
+        if result is None:
+            return Response(
+                content=json.dumps({&#34;detail&#34;: f&#34;No match found for {title}&#34;}),
+                status_code=status.HTTP_404_NOT_FOUND,
+                media_type=&#34;application/json&#34;,
+            )
+        # Saved first matching title movie
+        if result[0] is not None:
+            return Response(
+                content=json.dumps({&#34;detail&#34;: f&#34;Saved {result}&#34;}),
+                status_code=status.HTTP_201_CREATED,
+                media_type=&#34;application/json&#34;,
+            )
+        # Fist movie title coincidende is already in the database
+        else:
+            return Response(
+                content=json.dumps(
+                    {&#34;detail&#34;: f&#34;{title} already exists in the database&#34;}
+                ),
+                status_code=status.HTTP_200_OK,
+                media_type=&#34;application/json&#34;,
+            )
+    except Exception as e:
+        # Handle exceptions raised during fetch_and_save_movies_data
+        return Response(
+            content=json.dumps({&#34;detail&#34;: f&#34;An error occurred: {e}&#34;}),
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            media_type=&#34;application/json&#34;,
+        )</code></pre>
+</details>
+</dd>
+<dt id="movies_service.api.api.delete_movie"><code class="name flex">
+<span>async def <span class="ident">delete_movie</span></span>(<span>imdb_id: str, api_key: str = Depends(APIKeyHeader))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Delete a movie from the database based on the provided IMDb ID.</p>
+<p>Parameters:
+- <code>imdb_id</code> (str): The IMDb ID of the movie to delete.
+- <code>api_key</code> (str, optional): API key for authentication (if required).</p>
+<p>Returns:
+- dict: A message indicating whether the movie was successfully deleted or not.</p>
+<p>Raises:
+- HTTPException: If an error occurs during the deletion process, or if the API key is invalid.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.delete(&#34;/movie/{imdb_id}&#34;)
+async def delete_movie(imdb_id: str, api_key: str = Depends(APIKeyAuth)):
+    &#34;&#34;&#34;
+    Delete a movie from the database based on the provided IMDb ID.
+
+    Parameters:
+    - `imdb_id` (str): The IMDb ID of the movie to delete.
+    - `api_key` (str, optional): API key for authentication (if required).
+
+    Returns:
+    - dict: A message indicating whether the movie was successfully deleted or not.
+
+    Raises:
+    - HTTPException: If an error occurs during the deletion process, or if the API key is invalid.
+
+    &#34;&#34;&#34;
+    if not is_api_key_valid(api_key):
+        raise HTTPException(status_code=401, detail=&#34;Invalid API key&#34;)
+
+    with UnitOfWork(app.state.database_url) as unit_of_work:
+        repo = MoviesRepository(unit_of_work.session)
+        result = repo.delete_by_id(imdb_id)
+        if result:
+            return {&#34;detail&#34;: f&#34;Movie with ID {imdb_id} was deleted successfully&#34;}
+        logging.warning(&#34;Movie not found in the database&#34;)
+        raise HTTPException(status_code=404, detail=&#34;Movie not found in the database&#34;)</code></pre>
+</details>
+</dd>
+<dt id="movies_service.api.api.get_all_movies"><code class="name flex">
+<span>async def <span class="ident">get_all_movies</span></span>(<span>limit: int = Query(10), page: int = Query(1), *, request: starlette.requests.Request, response: starlette.responses.Response)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieve a list of movies.</p>
+<p>Parameters:
+- <code>limit</code> (int): The number of movies to retrieve. Defaults to 10. Must be greater than or equal to 1.
+- <code>page</code> (int): The results page to retrieve. Defaults to 1. Must be greater than or equal to 1.</p>
+<p>Returns:
+- List[Movie]: A list of movies retrieved based on the specified limit and page.</p>
+<p>Cache:
+- This endpoint is cached for 60 seconds.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.get(&#34;/movies&#34;)
+@cache(expire=60)
+async def get_all_movies(
+    limit: int = Query(10, title=&#34;The number of movies to retrieve&#34;, ge=1),
+    page: int = Query(1, title=&#34;Results page&#34;, ge=1),
+):
+    &#34;&#34;&#34;
+    Retrieve a list of movies.
+
+    Parameters:
+    - `limit` (int): The number of movies to retrieve. Defaults to 10. Must be greater than or equal to 1.
+    - `page` (int): The results page to retrieve. Defaults to 1. Must be greater than or equal to 1.
+
+    Returns:
+    - List[Movie]: A list of movies retrieved based on the specified limit and page.
+
+    Cache:
+    - This endpoint is cached for 60 seconds.
+    &#34;&#34;&#34;
+    with UnitOfWork(app.state.database_url) as unit_of_work:
+        repo = MoviesRepository(unit_of_work.session)
+        if not repo.is_database_empty():
+            offset = (page - 1) * limit
+            return repo.get_all(offset, limit)
+        else:
+            logging.warning(&#34;Movies not found in the database&#34;)
+            raise HTTPException(
+                status_code=404, detail=&#34;Movies not found in the database&#34;
+            )</code></pre>
+</details>
+</dd>
+<dt id="movies_service.api.api.get_movie"><code class="name flex">
+<span>async def <span class="ident">get_movie</span></span>(<span>title: str, *, request: starlette.requests.Request, response: starlette.responses.Response)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieve information about a specific movie.</p>
+<p>Parameters:
+- <code>title</code> (str): The title of the movie to retrieve.</p>
+<p>Returns:
+- Movie: Information about the specified movie.</p>
+<p>Cache:
+- This endpoint is cached for 60 seconds.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.get(&#34;/movie/{title}&#34;)
+@cache(expire=60)
+async def get_movie(title: str):
+    &#34;&#34;&#34;
+    Retrieve information about a specific movie.
+
+    Parameters:
+    - `title` (str): The title of the movie to retrieve.
+
+    Returns:
+    - Movie: Information about the specified movie.
+
+    Cache:
+    - This endpoint is cached for 60 seconds.
+    &#34;&#34;&#34;
+    with UnitOfWork(app.state.database_url) as unit_of_work:
+        repo = MoviesRepository(unit_of_work.session)
+        if not repo.is_database_empty():
+            movie = repo.get_by_title(title)
+            if not movie:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f&#39;No exact match for &#34;{title}&#34; in the database.&#39;,
+                )
+            return movie
+        else:
+            logging.warning(&#34;Movie not found in the database&#34;)
+            raise HTTPException(
+                status_code=404, detail=&#34;Movie not found in the database&#34;
+            )</code></pre>
+</details>
+</dd>
+<dt id="movies_service.api.api.is_api_key_valid"><code class="name flex">
+<span>def <span class="ident">is_api_key_valid</span></span>(<span>api_key: str = Header(None))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Dependency function to verify the API key.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_api_key_valid(api_key: str = Header(None)):
+    &#34;&#34;&#34;Dependency function to verify the API key.&#34;&#34;&#34;
+    return api_key in api_keys</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="movies_service.api" href="index.html">movies_service.api</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="movies_service.api.api.add_movie" href="#movies_service.api.api.add_movie">add_movie</a></code></li>
+<li><code><a title="movies_service.api.api.delete_movie" href="#movies_service.api.api.delete_movie">delete_movie</a></code></li>
+<li><code><a title="movies_service.api.api.get_all_movies" href="#movies_service.api.api.get_all_movies">get_all_movies</a></code></li>
+<li><code><a title="movies_service.api.api.get_movie" href="#movies_service.api.api.get_movie">get_movie</a></code></li>
+<li><code><a title="movies_service.api.api.is_api_key_valid" href="#movies_service.api.api.is_api_key_valid">is_api_key_valid</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
