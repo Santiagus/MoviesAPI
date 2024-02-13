@@ -4,6 +4,16 @@ from functools import wraps
 
 
 def time_measurer(func):
+    """
+    A decorator that measures the execution time of an asynchronous function.
+
+    Parameters:
+    - `func` (callable): The function to be measured.
+
+    Returns:
+    - callable: The decorated function.
+    """
+
     @wraps(func)
     async def wrapper(*args, **kwargs):
         start_time = time.time()
@@ -19,6 +29,15 @@ def time_measurer(func):
 def cpu_usage(func):
     @wraps(func)
     async def wrapper(*args, **kwargs):
+        """
+        A decorator that measures the CPU usage of an asynchronous function.
+
+        Parameters:
+        - `func` (callable): The function to be measured.
+
+        Returns:
+        - callable: The decorated function.
+        """
         process = psutil.Process()
         start_cpu_usage = process.cpu_percent(interval=None)
         result = await func(*args, **kwargs)
@@ -30,20 +49,16 @@ def cpu_usage(func):
     return wrapper
 
 
-# def memory_usage(func):
-#     @wraps(func)
-#     async def wrapper(*args, **kwargs):
-#         process = psutil.Process()
-#         start_memory_usage = process.memory_info().rss
-#         result = await func(*args, **kwargs)
-#         end_memory_usage = process.memory_info().rss
-#         memory_usage_diff = end_memory_usage - start_memory_usage
-#         print(f"Memory usage of {func.__name__}: {memory_usage_diff} bytes")
-#         return result
-
-
-#     return wrapper
 def format_size(size_bytes):
+    """
+    Convert a size in bytes to a human-readable format.
+
+    Parameters:
+    - `size_bytes` (int): The size in bytes.
+
+    Returns:
+    - str: The human-readable size.
+    """
     suffixes = ["B", "KB", "MB", "GB", "TB"]
     i = 0
     size = float(size_bytes)
@@ -56,6 +71,15 @@ def format_size(size_bytes):
 def memory_usage(func):
     @wraps(func)
     async def wrapper(*args, **kwargs):
+        """
+        A decorator that measures the memory usage of an asynchronous function.
+
+        Parameters:
+        - `func` (callable): The function to be measured.
+
+        Returns:
+        - callable: The decorated function.
+        """
         process = psutil.Process()
         start_memory_usage = process.memory_info().rss
         result = await func(*args, **kwargs)
