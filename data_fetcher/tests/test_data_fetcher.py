@@ -238,25 +238,23 @@ async def test_fetch_movies_data_no_results():
 async def test_fetch_movies_data_api_key_error():
     # Define test data
     url = "http://www.omdbapi.com/"
-    parameters = {"apikey": "test_api_key", "s": "non_existant_movie"}
+    parameters = {"apikey": "test_api_key", "s": "test_query"}
     headers = {"Accepts": "application/json"}
     limit = 10
 
     # Set up mock response data with error
     response_data = {"Response": "False", "Error": "Invalid API key!"}
-    mock_response = AsyncMock()
-    mock_response.status = 200
-    mock_response = response_data
+    with patch(
+        "data_fetcher.movie_data_fetcher.MovieDataFetcher.fetch_page",
+        return_value=response_data,
+    ):
+        session_mock = MagicMock()
 
-    # Set the return_value of session.get to return the response object
-    session_mock = AsyncMock()
-    session_mock.get.return_value = mock_response
-
-    # Call the method under test and expect an exception
-    with pytest.raises(Exception) as exc_info:
-        await MovieDataFetcher.fetch_movies_data(
-            session_mock, url, parameters, headers, limit
-        )
+        # Call the method under test and expect an exception
+        with pytest.raises(Exception) as exc_info:
+            await MovieDataFetcher.fetch_movies_data(
+                session_mock, url, parameters, headers, limit
+            )
 
         # Assertion
         assert str(exc_info.value) == "Error: Invalid API key!"
