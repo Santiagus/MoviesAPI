@@ -46,8 +46,8 @@ async def lifespan(app: FastAPI):
         # Database initilization
         with UnitOfWork(app.state.database_url) as unit_of_work:
             repo = MoviesRepository(unit_of_work.session)
+            app.state.mdf = MovieDataFetcher()
             if repo.is_database_empty():
-                app.state.mdf = MovieDataFetcher()
                 result = await app.state.mdf.fetch_and_save_movies_data("Disney")
                 if result:
                     logging.info(
