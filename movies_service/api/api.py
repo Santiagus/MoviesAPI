@@ -1,7 +1,6 @@
 import logging
 import json
 from fastapi import HTTPException, Query, Depends, status, Header, Response, status
-from sqlalchemy import false
 from data_layer.unit_of_work import UnitOfWork
 from movies_service.app import app
 from data_layer.movies_repository import MoviesRepository
@@ -15,6 +14,19 @@ async def get_all_movies(
     limit: int = Query(10, title="The number of movies to retrieve", ge=1),
     page: int = Query(1, title="Results page", ge=1),
 ):
+    """
+    Retrieve a list of movies.
+
+    Parameters:
+    - `limit` (int): The number of movies to retrieve. Defaults to 10. Must be greater than or equal to 1.
+    - `page` (int): The results page to retrieve. Defaults to 1. Must be greater than or equal to 1.
+
+    Returns:
+    - List[Movie]: A list of movies retrieved based on the specified limit and page.
+
+    Cache:
+    - This endpoint is cached for 60 seconds.
+    """
     with UnitOfWork(app.state.database_url) as unit_of_work:
         repo = MoviesRepository(unit_of_work.session)
         if not repo.is_database_empty():
@@ -30,6 +42,18 @@ async def get_all_movies(
 @app.get("/movie/{title}")
 @cache(expire=60)
 async def get_movie(title: str):
+    """
+    Retrieve information about a specific movie.
+
+    Parameters:
+    - `title` (str): The title of the movie to retrieve.
+
+    Returns:
+    - Movie: Information about the specified movie.
+
+    Cache:
+    - This endpoint is cached for 60 seconds.
+    """
     with UnitOfWork(app.state.database_url) as unit_of_work:
         repo = MoviesRepository(unit_of_work.session)
         if not repo.is_database_empty():
@@ -49,6 +73,19 @@ async def get_movie(title: str):
 
 @app.post("/movie/{title}")
 async def add_movie(title: str):
+    """
+    Add a new movie to the database based on the provided title.
+
+    Parameters:
+    - `title` (str): The title of the movie to add.
+
+    Returns:
+    - dict: A message indicating whether the movie was successfully added.
+
+    Example:
+        {"detail": "Movie added successfully"}
+
+    """
     try:
         result = await app.state.mdf.fetch_and_save_movies_data(title, limit=1)
         if result is None:
@@ -97,6 +134,20 @@ APIKeyAuth = APIKeyHeader(name="Authorization", auto_error=False)
 
 @app.delete("/movie/{imdb_id}")
 async def delete_movie(imdb_id: str, api_key: str = Depends(APIKeyAuth)):
+    """
+    Delete a movie from the database based on the provided IMDb ID.
+
+    Parameters:
+    - `imdb_id` (str): The IMDb ID of the movie to delete.
+    - `api_key` (str, optional): API key for authentication (if required).
+
+    Returns:
+    - dict: A message indicating whether the movie was successfully deleted or not.
+
+    Raises:
+    - HTTPException: If an error occurs during the deletion process, or if the API key is invalid.
+
+    """
     if not is_api_key_valid(api_key):
         raise HTTPException(status_code=401, detail="Invalid API key")
 
