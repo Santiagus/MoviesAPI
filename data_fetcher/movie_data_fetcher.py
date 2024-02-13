@@ -1,9 +1,7 @@
 import aiohttp
 import asyncio
-
 import logging
 
-from requests.exceptions import HTTPError
 from sqlalchemy import create_engine
 from data_layer.unit_of_work import UnitOfWork
 from data_layer.movies_repository import MoviesRepository
