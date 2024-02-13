@@ -81,10 +81,10 @@ class MovieDataFetcher:
         # First request
         response = await MovieDataFetcher.fetch_page(session, url, parameters, headers)
 
-        if response.get("Response") != "True":
-            raise Exception(f"Error: {response.get('Error')}")
-
-        total_results = int(response.get("totalResults", 0))
+        if response.get("Response") == "True":
+            total_results = int(response.get("totalResults", 0))
+        else:
+            total_results = 0
 
         # Check data in response
         if total_results == 0:
