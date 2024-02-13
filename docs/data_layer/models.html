@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>data_layer.models API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>data_layer.models</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from sqlalchemy import Column, Integer, String, Text, JSON
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+
+class MovieModel(Base):
+    &#34;&#34;&#34;
+    Model representing a movie.
+
+    Attributes:
+        imdb_id (str): The IMDb ID of the movie (primary key).
+        title (str): The title of the movie.
+        year (str): The release year of the movie.
+        rated (str): The rating of the movie.
+        released (str): The release date of the movie.
+        runtime (str): The duration of the movie.
+        genre (str): The genre of the movie.
+        director (str): The director(s) of the movie.
+        writer (str): The writer(s) of the movie.
+        actors (str): The actor(s) of the movie.
+        plot (str): The plot summary of the movie.
+        language (str): The language of the movie.
+        country (str): The country where the movie was produced.
+        awards (str): The awards received by the movie.
+        poster (str): The URL of the movie poster.
+        ratings (list): The ratings received by the movie.
+        metascore (str): The metascore of the movie.
+        imdb_rating (str): The IMDb rating of the movie.
+        imdb_votes (str): The number of IMDb votes received by the movie.
+        type (str): The type of the movie (e.g., movie, series).
+        dvd (str): The DVD release date of the movie.
+        box_office (str): The box office earnings of the movie.
+        production (str): The production company of the movie.
+        website (str): The official website of the movie.
+        response (str): The response status of the movie.
+    &#34;&#34;&#34;
+
+    __tablename__ = &#34;movies&#34;
+
+    imdb_id = Column(String, primary_key=True)
+    title = Column(String)
+    year = Column(String)
+    rated = Column(String)
+    released = Column(String)
+    runtime = Column(String)
+    genre = Column(String)
+    director = Column(String)
+    writer = Column(String)
+    actors = Column(String)
+    plot = Column(Text)
+    language = Column(String)
+    country = Column(String)
+    awards = Column(String)
+    poster = Column(String)
+    ratings = Column(JSON)
+    metascore = Column(String)
+    imdb_rating = Column(String)
+    imdb_votes = Column(String)
+    type = Column(String)
+    dvd = Column(String)
+    box_office = Column(String)
+    production = Column(String)
+    website = Column(String)
+
+    def to_dict(self):
+        &#34;&#34;&#34;
+        Convert the movie attributes to a dictionary.
+
+        Returns:
+            dict: A dictionary containing all attributes of the movie.
+        &#34;&#34;&#34;
+        return {
+            &#34;Title&#34;: self.title,
+            &#34;Year&#34;: self.year,
+            &#34;Rated&#34;: self.rated,
+            &#34;Released&#34;: self.released,
+            &#34;Runtime&#34;: self.runtime,
+            &#34;Genre&#34;: self.genre,
+            &#34;Director&#34;: self.director,
+            &#34;Writer&#34;: self.writer,
+            &#34;Actors&#34;: self.actors,
+            &#34;Plot&#34;: self.plot,
+            &#34;Language&#34;: self.language,
+            &#34;Country&#34;: self.country,
+            &#34;Awards&#34;: self.awards,
+            &#34;Poster&#34;: self.poster,
+            &#34;Ratings&#34;: self.ratings,
+            &#34;Metascore&#34;: self.metascore,
+            &#34;imdbRating&#34;: self.imdb_rating,
+            &#34;imdbVotes&#34;: self.imdb_votes,
+            &#34;imdbID&#34;: self.imdb_id,
+            &#34;Type&#34;: self.type,
+            &#34;DVD&#34;: self.dvd,
+            &#34;BoxOffice&#34;: self.box_office,
+            &#34;Production&#34;: self.production,
+            &#34;Website&#34;: self.website,
+        }</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="data_layer.models.MovieModel"><code class="flex name class">
+<span>class <span class="ident">MovieModel</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Model representing a movie.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>imdb_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>The IMDb ID of the movie (primary key).</dd>
+<dt><strong><code>title</code></strong> :&ensp;<code>str</code></dt>
+<dd>The title of the movie.</dd>
+<dt><strong><code>year</code></strong> :&ensp;<code>str</code></dt>
+<dd>The release year of the movie.</dd>
+<dt><strong><code>rated</code></strong> :&ensp;<code>str</code></dt>
+<dd>The rating of the movie.</dd>
+<dt><strong><code>released</code></strong> :&ensp;<code>str</code></dt>
+<dd>The release date of the movie.</dd>
+<dt><strong><code>runtime</code></strong> :&ensp;<code>str</code></dt>
+<dd>The duration of the movie.</dd>
+<dt><strong><code>genre</code></strong> :&ensp;<code>str</code></dt>
+<dd>The genre of the movie.</dd>
+<dt><strong><code>director</code></strong> :&ensp;<code>str</code></dt>
+<dd>The director(s) of the movie.</dd>
+<dt><strong><code>writer</code></strong> :&ensp;<code>str</code></dt>
+<dd>The writer(s) of the movie.</dd>
+<dt><strong><code>actors</code></strong> :&ensp;<code>str</code></dt>
+<dd>The actor(s) of the movie.</dd>
+<dt><strong><code>plot</code></strong> :&ensp;<code>str</code></dt>
+<dd>The plot summary of the movie.</dd>
+<dt><strong><code>language</code></strong> :&ensp;<code>str</code></dt>
+<dd>The language of the movie.</dd>
+<dt><strong><code>country</code></strong> :&ensp;<code>str</code></dt>
+<dd>The country where the movie was produced.</dd>
+<dt><strong><code>awards</code></strong> :&ensp;<code>str</code></dt>
+<dd>The awards received by the movie.</dd>
+<dt><strong><code>poster</code></strong> :&ensp;<code>str</code></dt>
+<dd>The URL of the movie poster.</dd>
+<dt><strong><code>ratings</code></strong> :&ensp;<code>list</code></dt>
+<dd>The ratings received by the movie.</dd>
+<dt><strong><code>metascore</code></strong> :&ensp;<code>str</code></dt>
+<dd>The metascore of the movie.</dd>
+<dt><strong><code>imdb_rating</code></strong> :&ensp;<code>str</code></dt>
+<dd>The IMDb rating of the movie.</dd>
+<dt><strong><code>imdb_votes</code></strong> :&ensp;<code>str</code></dt>
+<dd>The number of IMDb votes received by the movie.</dd>
+<dt><strong><code>type</code></strong> :&ensp;<code>str</code></dt>
+<dd>The type of the movie (e.g., movie, series).</dd>
+<dt><strong><code>dvd</code></strong> :&ensp;<code>str</code></dt>
+<dd>The DVD release date of the movie.</dd>
+<dt><strong><code>box_office</code></strong> :&ensp;<code>str</code></dt>
+<dd>The box office earnings of the movie.</dd>
+<dt><strong><code>production</code></strong> :&ensp;<code>str</code></dt>
+<dd>The production company of the movie.</dd>
+<dt><strong><code>website</code></strong> :&ensp;<code>str</code></dt>
+<dd>The official website of the movie.</dd>
+<dt><strong><code>response</code></strong> :&ensp;<code>str</code></dt>
+<dd>The response status of the movie.</dd>
+</dl>
+<p>A simple constructor that allows initialization from kwargs.</p>
+<p>Sets attributes on the constructed instance using the names and
+values in <code>kwargs</code>.</p>
+<p>Only keys that are present as
+attributes of the instance's class are allowed. These could be,
+for example, any mapped columns or relationships.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MovieModel(Base):
+    &#34;&#34;&#34;
+    Model representing a movie.
+
+    Attributes:
+        imdb_id (str): The IMDb ID of the movie (primary key).
+        title (str): The title of the movie.
+        year (str): The release year of the movie.
+        rated (str): The rating of the movie.
+        released (str): The release date of the movie.
+        runtime (str): The duration of the movie.
+        genre (str): The genre of the movie.
+        director (str): The director(s) of the movie.
+        writer (str): The writer(s) of the movie.
+        actors (str): The actor(s) of the movie.
+        plot (str): The plot summary of the movie.
+        language (str): The language of the movie.
+        country (str): The country where the movie was produced.
+        awards (str): The awards received by the movie.
+        poster (str): The URL of the movie poster.
+        ratings (list): The ratings received by the movie.
+        metascore (str): The metascore of the movie.
+        imdb_rating (str): The IMDb rating of the movie.
+        imdb_votes (str): The number of IMDb votes received by the movie.
+        type (str): The type of the movie (e.g., movie, series).
+        dvd (str): The DVD release date of the movie.
+        box_office (str): The box office earnings of the movie.
+        production (str): The production company of the movie.
+        website (str): The official website of the movie.
+        response (str): The response status of the movie.
+    &#34;&#34;&#34;
+
+    __tablename__ = &#34;movies&#34;
+
+    imdb_id = Column(String, primary_key=True)
+    title = Column(String)
+    year = Column(String)
+    rated = Column(String)
+    released = Column(String)
+    runtime = Column(String)
+    genre = Column(String)
+    director = Column(String)
+    writer = Column(String)
+    actors = Column(String)
+    plot = Column(Text)
+    language = Column(String)
+    country = Column(String)
+    awards = Column(String)
+    poster = Column(String)
+    ratings = Column(JSON)
+    metascore = Column(String)
+    imdb_rating = Column(String)
+    imdb_votes = Column(String)
+    type = Column(String)
+    dvd = Column(String)
+    box_office = Column(String)
+    production = Column(String)
+    website = Column(String)
+
+    def to_dict(self):
+        &#34;&#34;&#34;
+        Convert the movie attributes to a dictionary.
+
+        Returns:
+            dict: A dictionary containing all attributes of the movie.
+        &#34;&#34;&#34;
+        return {
+            &#34;Title&#34;: self.title,
+            &#34;Year&#34;: self.year,
+            &#34;Rated&#34;: self.rated,
+            &#34;Released&#34;: self.released,
+            &#34;Runtime&#34;: self.runtime,
+            &#34;Genre&#34;: self.genre,
+            &#34;Director&#34;: self.director,
+            &#34;Writer&#34;: self.writer,
+            &#34;Actors&#34;: self.actors,
+            &#34;Plot&#34;: self.plot,
+            &#34;Language&#34;: self.language,
+            &#34;Country&#34;: self.country,
+            &#34;Awards&#34;: self.awards,
+            &#34;Poster&#34;: self.poster,
+            &#34;Ratings&#34;: self.ratings,
+            &#34;Metascore&#34;: self.metascore,
+            &#34;imdbRating&#34;: self.imdb_rating,
+            &#34;imdbVotes&#34;: self.imdb_votes,
+            &#34;imdbID&#34;: self.imdb_id,
+            &#34;Type&#34;: self.type,
+            &#34;DVD&#34;: self.dvd,
+            &#34;BoxOffice&#34;: self.box_office,
+            &#34;Production&#34;: self.production,
+            &#34;Website&#34;: self.website,
+        }</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>sqlalchemy.orm.decl_api.Base</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="data_layer.models.MovieModel.metadata"><code class="name">var <span class="ident">metadata</span> : MetaData</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="data_layer.models.MovieModel.registry"><code class="name">var <span class="ident">registry</span> : RegistryType</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="data_layer.models.MovieModel.actors"><code class="name">var <span class="ident">actors</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.awards"><code class="name">var <span class="ident">awards</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.box_office"><code class="name">var <span class="ident">box_office</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.country"><code class="name">var <span class="ident">country</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.director"><code class="name">var <span class="ident">director</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.dvd"><code class="name">var <span class="ident">dvd</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.genre"><code class="name">var <span class="ident">genre</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.imdb_id"><code class="name">var <span class="ident">imdb_id</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.imdb_rating"><code class="name">var <span class="ident">imdb_rating</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.imdb_votes"><code class="name">var <span class="ident">imdb_votes</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.language"><code class="name">var <span class="ident">language</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.metascore"><code class="name">var <span class="ident">metascore</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.plot"><code class="name">var <span class="ident">plot</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.poster"><code class="name">var <span class="ident">poster</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.production"><code class="name">var <span class="ident">production</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.rated"><code class="name">var <span class="ident">rated</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.ratings"><code class="name">var <span class="ident">ratings</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.released"><code class="name">var <span class="ident">released</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.runtime"><code class="name">var <span class="ident">runtime</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.title"><code class="name">var <span class="ident">title</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.type"><code class="name">var <span class="ident">type</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.website"><code class="name">var <span class="ident">website</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.writer"><code class="name">var <span class="ident">writer</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+<dt id="data_layer.models.MovieModel.year"><code class="name">var <span class="ident">year</span> : Union[sqlalchemy.orm.attributes.InstrumentedAttribute[~_T], ~_T]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def __get__(
+    self, instance: Optional[object], owner: Any
+) -&gt; Union[InstrumentedAttribute[_T], _T]:
+    if instance is None:
+        return self
+
+    dict_ = instance_dict(instance)
+    if self.impl.supports_population and self.key in dict_:
+        return dict_[self.key]  # type: ignore[no-any-return]
+    else:
+        try:
+            state = instance_state(instance)
+        except AttributeError as err:
+            raise orm_exc.UnmappedInstanceError(instance) from err
+        return self.impl.get(state, dict_)  # type: ignore[no-any-return]</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="data_layer.models.MovieModel.to_dict"><code class="name flex">
+<span>def <span class="ident">to_dict</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert the movie attributes to a dictionary.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>A dictionary containing all attributes of the movie.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_dict(self):
+    &#34;&#34;&#34;
+    Convert the movie attributes to a dictionary.
+
+    Returns:
+        dict: A dictionary containing all attributes of the movie.
+    &#34;&#34;&#34;
+    return {
+        &#34;Title&#34;: self.title,
+        &#34;Year&#34;: self.year,
+        &#34;Rated&#34;: self.rated,
+        &#34;Released&#34;: self.released,
+        &#34;Runtime&#34;: self.runtime,
+        &#34;Genre&#34;: self.genre,
+        &#34;Director&#34;: self.director,
+        &#34;Writer&#34;: self.writer,
+        &#34;Actors&#34;: self.actors,
+        &#34;Plot&#34;: self.plot,
+        &#34;Language&#34;: self.language,
+        &#34;Country&#34;: self.country,
+        &#34;Awards&#34;: self.awards,
+        &#34;Poster&#34;: self.poster,
+        &#34;Ratings&#34;: self.ratings,
+        &#34;Metascore&#34;: self.metascore,
+        &#34;imdbRating&#34;: self.imdb_rating,
+        &#34;imdbVotes&#34;: self.imdb_votes,
+        &#34;imdbID&#34;: self.imdb_id,
+        &#34;Type&#34;: self.type,
+        &#34;DVD&#34;: self.dvd,
+        &#34;BoxOffice&#34;: self.box_office,
+        &#34;Production&#34;: self.production,
+        &#34;Website&#34;: self.website,
+    }</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="data_layer" href="index.html">data_layer</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="data_layer.models.MovieModel" href="#data_layer.models.MovieModel">MovieModel</a></code></h4>
+<ul class="two-column">
+<li><code><a title="data_layer.models.MovieModel.actors" href="#data_layer.models.MovieModel.actors">actors</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.awards" href="#data_layer.models.MovieModel.awards">awards</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.box_office" href="#data_layer.models.MovieModel.box_office">box_office</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.country" href="#data_layer.models.MovieModel.country">country</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.director" href="#data_layer.models.MovieModel.director">director</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.dvd" href="#data_layer.models.MovieModel.dvd">dvd</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.genre" href="#data_layer.models.MovieModel.genre">genre</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.imdb_id" href="#data_layer.models.MovieModel.imdb_id">imdb_id</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.imdb_rating" href="#data_layer.models.MovieModel.imdb_rating">imdb_rating</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.imdb_votes" href="#data_layer.models.MovieModel.imdb_votes">imdb_votes</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.language" href="#data_layer.models.MovieModel.language">language</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.metadata" href="#data_layer.models.MovieModel.metadata">metadata</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.metascore" href="#data_layer.models.MovieModel.metascore">metascore</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.plot" href="#data_layer.models.MovieModel.plot">plot</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.poster" href="#data_layer.models.MovieModel.poster">poster</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.production" href="#data_layer.models.MovieModel.production">production</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.rated" href="#data_layer.models.MovieModel.rated">rated</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.ratings" href="#data_layer.models.MovieModel.ratings">ratings</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.registry" href="#data_layer.models.MovieModel.registry">registry</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.released" href="#data_layer.models.MovieModel.released">released</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.runtime" href="#data_layer.models.MovieModel.runtime">runtime</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.title" href="#data_layer.models.MovieModel.title">title</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.to_dict" href="#data_layer.models.MovieModel.to_dict">to_dict</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.type" href="#data_layer.models.MovieModel.type">type</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.website" href="#data_layer.models.MovieModel.website">website</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.writer" href="#data_layer.models.MovieModel.writer">writer</a></code></li>
+<li><code><a title="data_layer.models.MovieModel.year" href="#data_layer.models.MovieModel.year">year</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
