@@ -11,7 +11,7 @@ PAGE_SIZE = 10
 
 
 @app.get("/movies")
-@cache(expire=60)
+@cache(expire=1)
 async def get_all_movies(
     limit: int = Query(10, title="The number of movies to retrieve", ge=1),
     page: int = Query(1, title="Results page", ge=1),
@@ -42,7 +42,7 @@ async def get_all_movies(
 
 
 @app.get("/movie/{title}")
-@cache(expire=60)
+@cache(expire=1)
 async def get_movie(title: str):
     """
     Retrieve information about a specific movie.
