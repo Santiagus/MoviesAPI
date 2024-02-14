@@ -7,6 +7,8 @@ from data_layer.movies_repository import MoviesRepository
 from fastapi.security.api_key import APIKeyHeader
 from fastapi_cache.decorator import cache
 
+PAGE_SIZE = 10
+
 
 @app.get("/movies")
 @cache(expire=60)
@@ -30,7 +32,7 @@ async def get_all_movies(
     with UnitOfWork(app.state.database_url) as unit_of_work:
         repo = MoviesRepository(unit_of_work.session)
         if not repo.is_database_empty():
-            offset = (page - 1) * limit
+            offset = (page - 1) * PAGE_SIZE
             return repo.get_all(offset, limit)
         else:
             logging.warning("Movies not found in the database")
